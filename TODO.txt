@@ -6,6 +6,7 @@ TODO
 
 * item booking/availability/expiry
 
+* quantity of items (multiplied with price)
 
 IN PROGRESS
 
