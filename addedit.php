@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.9 2003/11/10 09:11:17 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.10 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -52,7 +52,8 @@ $msg = '';
 $obj = new CInventory();
 $canDelete = $obj->canDelete( $msg, $inventory_id );
 
-if (!$obj->load( $inventory_id ) && $inventory_id > 0) {
+if ( $inventory_id > 0 && !$obj->load( $inventory_id ) )
+{
 	$AppUI->setMsg( 'Inventory' );
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
 	$AppUI->redirect();
@@ -74,6 +75,9 @@ if ( $inventory_parent )
 		$obj->inventory_category = $parent->inventory_category;
 		$obj->inventory_brand = $parent->inventory_brand;
 		$obj->inventory_purchased = $parent->inventory_purchased;
+		$obj->inventory_purchase_state = $parent->inventory_purchase_state;
+		$obj->inventory_purchase_company = $parent->inventory_purchase_company;
+		$obj->inventory_delivered = $parent->inventory_delivered;
 		$obj->inventory_rental_period = $parent->inventory_rental_period;
 		$obj->inventory_asset_no = $parent->inventory_asset_no;
 		$obj->inventory_costcode = $parent->inventory_costcode;
@@ -104,6 +108,7 @@ if (!$canEdit) {
 
 
 $purchase_date = new CDate( $obj->inventory_purchased );
+$delivered_date = new CDate( $obj->inventory_delivered ? $obj->inventory_delivered : $obj->inventory_purchased );
 $from_date = new CDate( $obj->inventory_assign_from );
 $until_date = new CDate( $obj->inventory_assign_until );
 
@@ -214,6 +219,7 @@ function submitIt()
 	form.date1.disabled = false;
 	form.date2.disabled = false;
 	form.date3.disabled = false;
+	form.date4.disabled = false;
 	
    	form.submit();
 }
@@ -332,11 +338,31 @@ function submitIt()
 					</TD>
 				</TR>
 				</TABLE>
-					
+				
+				<BR />
+					<?php echo $AppUI->_( "Purchase Status" ); ?>:<BR />
+					<SELECT NAME="inventory_purchase_state" ID="statelist" CLASS="text">
+						<OPTION VALUE="O" <?php if ( !$obj->inventory_purchase_state || $obj->inventory_purchase_state == "O" ) echo "SELECTED";?>>
+							<?php echo $AppUI->_( "Ordered" ); ?>
+						<OPTION VALUE="C" <?php if ($obj->inventory_purchase_state == "C" ) echo "SELECTED";?>>
+							<?php echo $AppUI->_( "Confirmed" ); ?> 
+						<OPTION VALUE="D" <?php if ($obj->inventory_purchase_state == "D" ) echo "SELECTED";?>>
+							<?php echo $AppUI->_( "Delayed" ); ?> 
+						<OPTION VALUE="A" <?php if ($obj->inventory_purchase_state == "A" ) echo "SELECTED";?>>
+							<?php echo $AppUI->_( "Arrived" ); ?> 
+					</SELECT>
+				<BR />
 				<BR />
 					<?php echo $AppUI->_( "Purchase Date" ); ?>:<BR />
 					<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date1" NAME="inventory_purchased" VALUE="<?php echo $purchase_date->format( '%Y-%m-%d' ); ?>" />
 					<a href="#" onClick="return showCalendar('date1', 'y-mm-dd');">
+						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
+					</a>
+				
+				<BR />
+					<?php echo $AppUI->_( "Delivery Date" ); ?>:<BR />
+					<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date4" NAME="inventory_delivered" VALUE="<?php echo $delivered_date->format( '%Y-%m-%d' ); ?>" />
+					<a href="#" onClick="return showCalendar('date4', 'y-mm-dd');">
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 				</TD>

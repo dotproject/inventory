@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.9 2003/11/11 03:14:57 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.10 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -37,6 +37,7 @@ $AppUI->savePlace();
 
 
 $purchase_date = new CDate( $obj->inventory_purchased );
+$delivered_date = new CDate( $obj->inventory_delivered ? $obj->inventory_delivered : $obj->inventory_purchased );
 $from_date = new CDate( $obj->inventory_assign_from );
 $until_date = new CDate( $obj->inventory_assign_until );
 
@@ -146,8 +147,22 @@ function delIt()
 			</TD>
 		</TR>
 		<TR>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Purchase Status');?>:</TD>
+			<TD CLASS="hilite">
+			<?php
+				$terms = array( "O" => "Ordered", "C" => "Confirmed", "D" => "Delayed", "A" => "Arrived" );
+				if ( !isset( $obj->inventory_purchase_state ) ) $obj->inventory_purchase_state = "A";
+				echo $AppUI->_( $terms[ $obj->inventory_purchase_state ] );
+			?>
+			</TD>
+		</TR>
+		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Purchase Date');?>:</TD>
 			<TD CLASS="hilite"> <?php echo $purchase_date->format( $df ); ?></TD>
+		</TR>
+		<TR>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Delivery Date');?>:</TD>
+			<TD CLASS="hilite"> <?php echo $delivered_date->format( $df ); ?></TD>
 		</TR>
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Price');?>:</TD>

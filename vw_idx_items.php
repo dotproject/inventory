@@ -3,6 +3,9 @@
 global $m,$df,$item_list,$sorted_item_list,$AppUI;
 global $user_list, $project_list, $company_list, $department_list;
 global $sort_state;
+global $inventory_view_mode;
+
+if ( !isset( $inventory_view_mode ) ) $inventory_view_mode = "normal";
 
 error_reporting( E_ALL );
 
@@ -79,7 +82,14 @@ function sortHeader( $header, $field )
 			sortHeader( $AppUI->_( "Assigned to" ), "inventory_user_username" );
 			sortHeader( $AppUI->_( "Project" ), "inventory_project_name" );
 			sortHeader( $AppUI->_( "Date" ), "inventory_purchased" );
-			sortHeader( $AppUI->_( "Cost" ), "inventory_totalcost" );
+			if ( $inventory_view_mode == "normal" )
+			{
+				sortHeader( $AppUI->_( "Cost" ), "inventory_totalcost" );
+			}
+			if ( $inventory_view_mode == "orders" )
+			{
+				sortHeader( $AppUI->_( "Status" ), "inventory_purchase_state" );
+			}
 		?>
 <!--		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
 		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click for details").")"; ?></TH>

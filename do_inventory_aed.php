@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.4 2003/11/10 03:04:42 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.5 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -184,6 +184,9 @@ if (!$obj->bind( $_POST ))
 
 $date = new CDate( $obj->inventory_purchased );
 $obj->inventory_purchased = $date->format( FMT_DATETIME_MYSQL );
+
+$date = new CDate( $obj->inventory_delivered );
+$obj->inventory_delivered = $date->format( FMT_DATETIME_MYSQL );
 
 $date = new CDate( $obj->inventory_assign_from );
 $obj->inventory_assign_from = $date->format( FMT_DATETIME_MYSQL );

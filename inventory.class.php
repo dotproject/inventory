@@ -26,6 +26,10 @@ class CInventory extends CDpObject
 	var $inventory_parent = NULL;
 	var $inventory_assign_from = NULL;
 	var $inventory_assign_until = NULL;
+// v0.2
+	var $inventory_purchase_state = NULL;
+	var $inventory_purchase_company = NULL;
+	var $inventory_delivered = NULL;
 	
 	function CInventory()
 	{

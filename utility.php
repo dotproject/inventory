@@ -45,6 +45,7 @@ function get_brand_name( &$brand_list, $braind )
 function getSortState()
 {
 	global $AppUI;
+	
 	$sort_state = array();
 	if ( $AppUI->getState( 'InventoryIdxSortState' ) )
 	{
@@ -76,6 +77,7 @@ function load_all_items()
 {
 	global $item_list, $item_list_parents, $AppUI;
 	global $sorted_item_list;
+	global $inventory_view_mode;
 	
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
@@ -97,23 +99,32 @@ function load_all_items()
 		 LEFT JOIN users ON inventory_user=user_id
 		 LEFT JOIN projects ON inventory_project=project_id
 		";
+		
+	$sql .= "WHERE 1 \n";
 	
 	if ( $filter_company )
 	{
 		if ( $filter_index && $filter_type != "choose" )
 		{
-			$sql .= "WHERE inventory_${filter_type} = $filter_index";
+			$sql .= "AND inventory_${filter_type} = $filter_index \n";
 		}
 		else
 		{
-			$sql .= "WHERE inventory_company = $filter_company \n";
+			$sql .= "AND inventory_company = $filter_company \n";
 		}
 	}
 	
+	if ( $inventory_view_mode == "orders" )
+	{
+		$sql .= "AND inventory_purchase_state <> 'A' AND inventory_purchase_state IS NOT NULL \n";
+	}
+	else
+	{
+		$sql .= "AND ( inventory_purchase_state IS NULL OR inventory_purchase_state = 'A' )  \n";
+	}
 	
 	
-	$sql_list = db_loadList( $sql );
-	echo db_error();
+	$sql_list = db_loadList( $sql ); db_error();
 	
 // re-index the list based on inventory_id
 	
@@ -200,6 +211,7 @@ function display_item( &$item, $indent, $children = 0 )
 	global $item_list_parents,$AppUI;
 	global $user_list, $project_list, $company_list, $department_list;
 	global $marked;
+	global $inventory_view_mode;
 	
 // load up the marked array
 	
@@ -295,20 +307,38 @@ function display_item( &$item, $indent, $children = 0 )
 	
 	echo "</TD><TD NOWRAP>";
 	
-	$date = new CDate( $item[ 'inventory_purchased' ] );
+	$date = "";
+	if ( $inventory_view_mode == "orders" )
+	{
+		$date = new CDate( $item[ 'inventory_purchased' ] );
+	}
+	else
+	{
+		$date = new CDate( $item[ 'inventory_delivered' ] );
+	}
 	echo $date->format( $df );
 	
 	echo "</TD><TD>";
 	
+	if ( $inventory_view_mode == "normal" )
+	{
 // if children display is disabled then print total cost
 	
-	if ( !$children )
-	{
-		$obj = new CInventory;
-		
-		echo $item[ 'inventory_cost' ] + $obj->calcChildrenTotal( $item[ 'inventory_id' ], $item_list, $item_list_parents );
+		if ( !$children )
+		{
+			$obj = new CInventory;
+			
+			echo $item[ 'inventory_cost' ] + $obj->calcChildrenTotal( $item[ 'inventory_id' ], $item_list, $item_list_parents );
+		}
+		else echo $item[ 'inventory_cost' ];
 	}
-	else echo $item[ 'inventory_cost' ];
+	
+	if ( $inventory_view_mode == "orders" )
+	{
+		$terms = array( "O" => "Ordered", "C" => "Confirmed", "D" => "Delayed", "A" => "Arrived" );
+		if ( !isset( $item[ 'inventory_purchase_state' ] ) ) $item[ 'inventory_purchase_state' ] = "A";
+		echo $AppUI->_( $terms[ $item[ 'inventory_purchase_state' ] ] );
+	}
 	
 	echo "</TD></TR>";
 	

@@ -39,5 +39,6 @@ utility.php
 view.php
 vw_idx_categories.php
 vw_idx_items.php
+vw_idx_orders.php
 images\48_my_computer.png
 [ASSOCIATION]
