@@ -72,6 +72,7 @@ function display_item( &$item, $indent, $children = 0 )
 {
 	global $m,$brand_list,$category_list,$df,$item_list,$drawn_array;
 	global $item_list_parents,$AppUI;
+	global $user_list, $project_list, $company_list, $department_list;
 	
 	$drawn_array[ $item['inventory_id' ] ] = 1;
 	
@@ -109,6 +110,28 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</TD><TD NOWRAP>";
 	echo get_category_name( $category_list, $item['inventory_category'] );
 	
+/* cache lookup of company-names */
+	
+	echo "</TD><TD NOWRAP>";
+	if ( !isset( $company_list[ $item[ 'inventory_company' ] ] ) )
+	{
+		$company = new CCompany();
+		$company_list[ $item[ 'inventory_company' ] ] = ( ( $company->load( $item[ 'inventory_company' ] ) )
+													? $company->company_name : $AppUI->_( "Unknown" ) );
+	}
+	echo $company_list[ $item[ 'inventory_company' ] ];
+	
+/* cache lookup of department names */
+	
+	echo "</TD><TD NOWRAP>";
+	if ( !isset( $department_list[ $item[ 'inventory_department' ] ] ) )
+	{
+		$dept = new CDepartment();
+		$department_list[ $item[ 'inventory_department' ] ] = ( ( $dept->load( $item[ 'inventory_department' ] ) )
+													? $dept->dept_name : $AppUI->_( "Unknown" ) );
+	}
+	echo $department_list[ $item[ 'inventory_department' ] ];
+	
 /* cache lookup of user-names */
 	
 	echo "</TD><TD NOWRAP>";
@@ -116,7 +139,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		$user = new CUser();
 		$user_list[ $item[ 'inventory_user' ] ] = ( ( $user->load( $item[ 'inventory_user' ] ) )
-													? $user->user_first_name." ".$user->user_last_name : "Unknown" );
+													? $user->user_first_name." ".$user->user_last_name : $AppUI->_( "Unassigned" ) );
 	}
 	echo $user_list[ $item[ 'inventory_user' ] ];
 	
@@ -127,7 +150,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		$proj = new CProject();
 		$project_list[ $item[ 'inventory_project' ] ] = ( ( $proj->load( $item[ 'inventory_project' ] ) )
-													? $proj->project_name : "Unknown" );
+													? $proj->project_name : $AppUI->_( "Unassigned" ) );
 	}
 	echo $project_list[ $item[ 'inventory_project' ] ];
 	

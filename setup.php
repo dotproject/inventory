@@ -35,6 +35,8 @@ class CSetupInventory {
 			"inventory_category int(11) NOT NULL default '0'," .
 			"inventory_brand int(11) NOT NULL default '0'," .
 			"inventory_purchased date NOT NULL default '2001-01-01'," .
+			"inventory_assign_from date NOT NULL default '2001-01-01'," .
+			"inventory_assign_until date NOT NULL default '2001-01-01'," .
 			"inventory_cost int(20) NOT NULL default '0'," .
 			"inventory_rental_period char NOT NULL default ' '," .
 			"inventory_name char(80)," .

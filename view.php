@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.2 2003/11/08 06:51:48 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -35,6 +35,8 @@ if ( !$obj->load( $inventory_id ) )
 
 
 $purchase_date = new CDate( $obj->inventory_purchased );
+$from_date = new CDate( $obj->inventory_assign_from );
+$until_date = new CDate( $obj->inventory_assign_until );
 
 
 // set up title block:
@@ -92,7 +94,7 @@ function delIt()
 			</TD>
 		</TR>
 		<TR>
-			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Id');?>:</TD>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Asset No');?>:</TD>
 			<TD CLASS="hilite">
 			<?php echo $obj->getAssetNo(); ?>
 			</TD>
@@ -167,6 +169,14 @@ function delIt()
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Project');?>:</TD>
 			<TD CLASS="hilite"> <?php $project = new CProject; if ($project->load( $obj->inventory_project )) echo $project->project_name; ?></TD>
+		</TR>
+		<TR>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Assign From');?>:</TD>
+			<TD CLASS="hilite"> <?php echo $from_date->format( $df ); ?></TD>
+		</TR>
+		<TR>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Assign Until');?>:</TD>
+			<TD CLASS="hilite"> <?php echo $until_date->format( $df ); ?></TD>
 		</TR>
 		<TR><TD>&nbsp;</TD></TR>
 		<TR>

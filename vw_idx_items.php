@@ -2,12 +2,21 @@
 
 global $m,$df,$item_list;
 
+global $user_list, $project_list, $company_list, $department_list;
+
 error_reporting( E_ALL );
 
 require_once( $AppUI->getModuleClass( "admin" ) );
 require_once( $AppUI->getModuleClass( "projects" ) );
+require_once( $AppUI->getModuleClass( "companies" ) );
+require_once( $AppUI->getModuleClass( "departments" ) );
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+
+$user_list = array();
+$project_list = array();
+$company_list = array();
+$department_list = array();
 
 include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
 
@@ -21,10 +30,12 @@ load_all_items();
 	<THEAD>
 	<TR>
 		<TH></TH>
-		<TH><?php echo $AppUI->_( "Id" ); ?></TH>
-		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click to view details").")"; ?></TH>
+		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
+		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click for details").")"; ?></TH>
 		<TH><?php echo $AppUI->_( "Brand" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Category" ); ?></TH>
+		<TH><?php echo $AppUI->_( "Company" ); ?></TH>
+		<TH><?php echo $AppUI->_( "Department" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Assigned to" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Project" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Date" ); ?></TH>
@@ -33,9 +44,6 @@ load_all_items();
 	</THEAD>
 	<TBODY>
 	<?php
-		$user_list = array();
-		$project_list = array();
-		
 		
 		$child_parent = 0;
 		if ( isset( $_GET[ "children" ] ) ) $child_parent = $_GET[ "children" ];

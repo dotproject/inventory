@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.3 2003/11/08 03:33:04 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.4 2003/11/08 06:51:48 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list;
 
@@ -38,6 +38,8 @@ if ( $inventory_parent )
 		$obj->inventory_rental_period = $parent->inventory_rental_period;
 		$obj->inventory_asset_no = $parent->inventory_asset_no;
 		$obj->inventory_costcode = $parent->inventory_costcode;
+		$obj->inventory_assign_from = $parent->inventory_assign_from;
+		$obj->inventory_assign_until = $parent->inventory_assign_until;
 		$obj->inventory_parent = $inventory_parent;
 		
 		$parent_name = $parent->inventory_name;
@@ -63,6 +65,8 @@ if (!$canEdit) {
 
 
 $purchase_date = new CDate( $obj->inventory_purchased );
+$from_date = new CDate( $obj->inventory_assign_from );
+$until_date = new CDate( $obj->inventory_assign_until );
 
 
 // load up accessible company list
@@ -351,15 +355,19 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 	<INPUT NAME="inventory_id" TYPE="hidden" VALUE="<?php echo $inventory_id; ?>" />
 	<INPUT NAME="inventory_parent" TYPE="hidden" VALUE="<?php echo $obj->inventory_parent; ?>" />
 <TR>
-	<TD>
+	<TD COLSPAN="2">
 		<?php
 			if ( $inventory_id )
 			{
-				echo "<span style='font-size: large;'>".$AppUI->_("Id").": ";
+				echo "<span style='font-size: large;'>".$AppUI->_("Asset No").": ";
 				echo $obj->getAssetNo();
 				echo "</span><BR /><BR />";
 			}
 		?>
+	</TD>
+</TR>
+<TR VALIGN="top">
+	<TD>
 		<?php echo $AppUI->_( "Identification" ); ?>: <BR />
 		<TABLE BORDER="1" CELLPADDING="4" WIDTH="100%">
 		<TR><TD>
@@ -414,7 +422,7 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 		</TABLE>
 	</TD>
 </TR>
-<TR>
+<TR VALIGN="top">
 	<TD>
 		<?php echo $AppUI->_( "Purchase Info" );?>: <BR />
 		<TABLE BORDER="1" CELLPADDING="4" WIDTH="100%">
@@ -504,6 +512,7 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 							}
 						}
 					?>
+					<OPTION VALUE="0"><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
 				</TD>
 				<TD>
@@ -525,7 +534,36 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 						}
 				
 					?>
+					<OPTION VALUE="0"><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
+				</TD>
+			</TR>
+			<TR>
+				<TD COLSPAN="2">
+					<TABLE ALIGN="center" border="0">
+					<TR>
+						<TD>
+							<?php echo $AppUI->_( "From" ); ?>: 
+						</TD>
+						<TD>
+							<?php echo $AppUI->_( "Until" ); ?>: 
+						</TD>
+					</TR>
+					<TR>
+						<TD STYLE="padding-right: 10px">
+							<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date2" NAME="inventory_assign_from" VALUE="<?php echo $from_date->format( '%Y-%m-%d' ); ?>" />
+							<a href="#" onClick="return showCalendar('date2', 'y-mm-dd');">
+								<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
+							</a>
+						</TD>
+						<TD STYLE="padding-left: 10px">
+							<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date3" NAME="inventory_assign_until" VALUE="<?php echo $until_date->format( '%Y-%m-%d' ); ?>" />
+							<a href="#" onClick="return showCalendar('date3', 'y-mm-dd');">
+								<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
+							</a>
+						</TD>
+					</TR>
+					</TABLE>
 				</TD>
 			</TR>
 		</TABLE>
@@ -575,11 +613,8 @@ if ( $inventory_id )
 EnableDisable( 'category' );
 EnableDisable( 'brand' );
 <?php
-	if ( $inventory_id )
-	{
-		echo "changeList( getElementById( 'companylist' ), dept_lists, 'departmentlist', "
-			.$obj->inventory_department," );";
-	}
+	echo "changeList( getElementById( 'companylist' ), dept_lists, 'departmentlist', "
+		.(($inventory_id)?$obj->inventory_department:1)," );";
 ?>
 
 -->
