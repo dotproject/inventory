@@ -1,0 +1,25 @@
+PROJECT: dotproject
+SUB-PROJECT: dotmods
+NAME: INVENTORY MODULE
+CONTACT: dylan_cuthbert@users.sourceforge.net
+
+SUMMARY
+
+Module to enable asset inventorising and management between projects and users.
+
+INSTALLATION
+
+[ from the dotproject root dir ]
+cd modules
+cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/dotmods co inventory
+
+Then, from the Admin - modules configuration screen within BNAT the inventory
+module should be visible. Click the word install and the module should move up
+into the installed module list.  Then click the text that says "disable" to
+enable the module, and the text that says "hidden" to make the module visible
+on the title bar.
+
+USAGE
+
+Usage of this module is fairly obvious but over time notes may be added here.
+
