@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.5 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.6 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -161,6 +161,14 @@ function EnableDisable( _type )
 function submitIt()
 {
 	var form = document.editFrm;
+	
+/* enable all the disabled fields so they are POSTed */
+	
+	form.companylist.disabled = false;
+	form.departmentlist.disabled = false;
+	form.date1.disabled = false;
+	form.date2.disabled = false;
+	form.date3.disabled = false;
 	
    	form.submit();
 }
@@ -446,7 +454,7 @@ EnableDisable( 'category' );
 EnableDisable( 'brand' );
 <?php
 	echo "changeList( getElementById( 'companylist' ), dept_lists, 'departmentlist', "
-		.(($inventory_id)?$obj->inventory_department:1)," );";
+		.(($inventory_id || $inventory_parent)?$obj->inventory_department:1)," );";
 ?>
 
 -->

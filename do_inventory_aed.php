@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.2 2003/11/08 06:51:48 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.3 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -125,6 +125,15 @@ if ( $category == -1 )
 
 $obj = new CInventory();
 
+
+if (!$obj->bind( $_POST ))
+{
+	$AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
+	$AppUI->redirect();
+}
+
+print_r( $_POST );
+
 /* convert dates to SQL format */
 
 $date = new CDate( $obj->inventory_purchased );
@@ -136,11 +145,6 @@ $obj->inventory_assign_from = $date->format( FMT_DATETIME_MYSQL );
 $date = new CDate( $obj->inventory_assign_until );
 $obj->inventory_assign_until = $date->format( FMT_DATETIME_MYSQL );
 
-if (!$obj->bind( $_POST ))
-{
-	$AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
-	$AppUI->redirect();
-}
 
 if ( !$obj->store() ) $AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
 
