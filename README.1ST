@@ -7,11 +7,22 @@ SUMMARY
 
 Module to enable asset inventorising and management between projects and users.
 
-INSTALLATION
+INSTALLATION FROM FILE-RELEASE
+
+[ from the dotproject root dir ]
+
+cd modules
+tar zxvf inventory1a181103.tgz
+
+now read the configuration notes.
+
+INSTALLATION FROM CVS
 
 [ from the dotproject root dir ]
 cd modules
 cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/dotmods co inventory
+
+CONFIGURATION
 
 Then, from the Admin - modules configuration screen within BNAT the inventory
 module should be visible. Click the word install and the module should move up
