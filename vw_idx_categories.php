@@ -65,7 +65,7 @@ rw.document.write( "</BODY>" );
 			<TR>
 				<TH></TH>
 				<TH><?php echo $AppUI->_( "Category Name" ); ?></TH>
-				<TH><?php echo $AppUI->_( "Mark" ); ?></TH>
+				<TH NOWRAP><?php echo $AppUI->_( "Mark" ); ?></TH>
 			</TR>
 			</THEAD>
 			<TBODY>
@@ -96,7 +96,7 @@ rw.document.write( "</BODY>" );
 			<TR>
 				<TH></TH>
 				<TH><?php echo $AppUI->_( "Brand Name" ); ?></TH>
-				<TH><?php echo $AppUI->_( "Mark" ); ?></TH>
+				<TH NOWRAP><?php echo $AppUI->_( "Mark" ); ?></TH>
 			</TR>
 			</THEAD>
 			<TBODY>

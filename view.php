@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.5 2003/11/10 06:33:16 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.6 2003/11/10 06:49:15 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -43,7 +43,7 @@ $until_date = new CDate( $obj->inventory_assign_until );
 
 // set up title block:
 
-$titleBlock = new CTitleBlock( $AppUI->_("View Inventory Item"), '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
+$titleBlock = new CTitleBlock( "View Inventory Item", '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
 if (!getDenyEdit( $m ))
 {
@@ -88,7 +88,7 @@ function delIt()
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
 	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
-		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="1" /> <?php echo $AppUI->_( "delete sub-tasks also" ); ?>
+		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="1" /> <?php echo $AppUI->_( "delete sub-items also" ); ?>
 	</DIV>
 </FORM>
 
@@ -111,7 +111,7 @@ function delIt()
 			<TD CLASS="hilite"> <?php echo $obj->inventory_name; ?></TD>
 		</TR>
 		<TR>
-			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Serial');?>:</TD>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Serial No');?>:</TD>
 			<TD CLASS="hilite"> <?php echo $obj->inventory_serial; ?></TD>
 		</TR>
 		<TR>
@@ -167,7 +167,7 @@ function delIt()
 		</TR>
 		<TR><TD>&nbsp;</TD></TR>
 		<TR>
-			<TD NOWRAP COLSPAN="2"><STRONG><?php echo $AppUI->_('Assigned To');?></STRONG></TD>
+			<TD NOWRAP COLSPAN="2"><STRONG><?php echo $AppUI->_('Assigned to');?></STRONG></TD>
 		</TR>
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Project');?>:</TD>

@@ -26,7 +26,7 @@ load_all_items();
 
 
 
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" >
 	<THEAD>
 	<TR>
 		<TH></TH>

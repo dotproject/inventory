@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: index.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.2 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
@@ -10,7 +10,6 @@ $AppUI->savePlace();
 // check permissions for this module
 $canRead = !getDenyRead( $m );
 $canEdit = !getDenyEdit( $m );
-
 
 if (!$canRead) {
 	$AppUI->redirect( "m=public&a=access_denied" );
@@ -47,7 +46,7 @@ load_company_list();
 
 $filters = array();
 reset( $company_list );
-$filters[ '0' ] = $AppUI->_( "All Companies" );
+$filters[ '0' ] = "All Companies";
 
 foreach( $company_list as $company )
 {

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.7 2003/11/10 03:04:42 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.8 2003/11/10 06:33:16 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -74,8 +74,7 @@ load_company_list();
 
 // show title block
 
-$title =  $AppUI->_((($inventory_id)?"Edit Inventory Item":"Add Inventory Item"));
-$title .= (($parent_name)?(" (".$AppUI->_("Parent").": $parent_name)"):'');
+$title =  (($inventory_id)?"Edit Inventory Item":"Add Inventory Item");
 
 $titleBlock = new CTitleBlock( $title, '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
@@ -194,7 +193,7 @@ function submitIt()
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
 	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
-		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="0" /> <?php echo $AppUI->_( "delete sub-tasks also" ); ?>
+		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="0" /> <?php echo $AppUI->_( "delete sub-items also" ); ?>
 	</DIV>
 </FORM>
 <FORM NAME="editFrm" action="?m=inventory&a=view&inventory_id="<?php echo $inventory_id; ?>" method="post" >
