@@ -1,6 +1,6 @@
 <?php
 
-global $m,$df,$item_list,$sorted_item_list,$AppUI;
+global $m,$df,$item_list,$sorted_item_list,$AppUI, $dPconfig;
 global $user_list, $project_list, $company_list, $department_list;
 global $sort_state;
 global $inventory_view_mode;
