@@ -292,6 +292,10 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}' ".(($children && !$item[ 'inventory_parent' ] )?" style='font-weight: bold'":"").">";
 	echo $item['inventory_name'];
+	if ( $item['inventory_quantity'] > 1 )
+	{
+		echo '<i> x'.$item['inventory_quantity'].'</i>';
+	}
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
 		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );

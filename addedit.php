@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.12 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.13 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -330,9 +330,13 @@ function submitIt()
 				<TD ROWSPAN="3" NOWRAP>
 				<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
 				<TR>
-					<TD WIDTH="50%" NOWRAP><?php echo $AppUI->_( "Cost" ); ?>:<BR />
+					<TD WIDTH="33%" NOWRAP><?php echo $AppUI->_( "Cost" ); ?>:<BR />
 					<INPUT TYPE="TEXT" CLASS="text" NAME="inventory_cost" VALUE="<?php echo dPformSafe( $obj->inventory_cost ); ?>" SIZE="10" />
-					</TD><TD WIDTH="50%" NOWRAP>
+					</TD>
+					<TD WIDTH="33%" NOWRAP><?php echo $AppUI->_( "Quantity" ); ?>:<BR />
+					<INPUT TYPE="TEXT" CLASS="text" NAME="inventory_quantity" VALUE="<?php echo dPformSafe( $obj->inventory_quantity ); ?>" SIZE="10" />
+					</TD>
+					<TD WIDTH="33%" NOWRAP>
 					<?php echo $AppUI->_( "Cost Code" ); ?>:<BR />
 					<INPUT TYPE="TEXT" CLASS="text" NAME="inventory_costcode" VALUE="<?php echo dPformSafe( $obj->inventory_costcode ); ?>" SIZE="10" />
 					</TD>

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.13 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.14 2004/08/05 09:52:07 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -176,6 +176,10 @@ function delIt()
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Price');?>:</TD>
 			<TD CLASS="hilite"> <?php echo $obj->inventory_cost; ?></TD>
+		</TR>
+		<TR>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Quantity');?>:</TD>
+			<TD CLASS="hilite"> <?php echo $obj->inventory_quantity; ?></TD>
 		</TR>
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Purchase Type');?>:</TD>

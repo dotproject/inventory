@@ -11,7 +11,7 @@
 // MODULE CONFIGURATION DEFINITION
 $config = array();
 $config['mod_name'] = 'Inventory';
-$config['mod_version'] = '0.2';
+$config['mod_version'] = '0.3';
 $config['mod_directory'] = 'inventory';
 $config['mod_setup_class'] = 'CSetupInventory';
 $config['mod_type'] = 'user';
@@ -46,6 +46,11 @@ class CSetupInventory {
 			db_exec( $sql ); db_error();
 			
 		case "0.2":
+			$sql = "ALTER TABLE inventory " .
+				"   ADD COLUMN inventory_quantity int(11) NOT NULL default '1'";
+			db_exec( $sql ); db_error();
+			
+		case "0.3":
 			return true;
 				
 		default:
