@@ -1,10 +1,8 @@
-<?php /* INVENTORY $Id: index.php,v 1.2 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.3 2003/11/10 09:11:17 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
 include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
-
-$AppUI->savePlace();
 
 
 // check permissions for this module
@@ -18,6 +16,21 @@ if (!$canRead) {
 
 // setup the title block
 $titleBlock = new CTitleBlock( 'Inventory', "../modules/inventory/images/48_my_computer.png", $m, "$m.$a" );
+
+// quickfilter set?
+
+if ( isset( $_GET[ 'quick_filter' ] ) )
+{
+	$databases = array( "user" => "users", "company" => "companies", "department" => "departments", "project" => "projects" );
+	$sql = "SELECT ".$_GET[ "quick_filter" ]."_company AS company_id FROM ".$databases[ $_GET[ 'quick_filter' ] ];
+	$sql .= " WHERE ".$_GET[ 'quick_filter' ]."_id=".$_GET[ 'quick_filter_id' ];
+	$row = db_loadList( $sql );
+	
+	$AppUI->setState( 'InventoryIdxFilterCompany', $row[0][ 'company_id' ] );
+	$AppUI->setState( 'InventoryIdxFilterType', $_GET[ 'quick_filter' ] );
+	$AppUI->setState( 'InventoryIdxFilterIndex', $_GET[ 'quick_filter_id' ] );
+	
+}
 
 // retrieve any state parameters
 
@@ -82,6 +95,8 @@ if ($canEdit) {
 }
 
 $titleBlock->show();
+
+$AppUI->savePlace();
 
 include_once("{$AppUI->cfg['root_dir']}/modules/inventory/javalists.php");
 include("{$AppUI->cfg['root_dir']}/modules/inventory/inventory.php");

@@ -196,7 +196,7 @@ function get_marked_inventory( )
 
 function display_item( &$item, $indent, $children = 0 )
 {
-	global $m,$brand_list,$category_list,$df,$item_list,$drawn_array;
+	global $m,$a,$brand_list,$category_list,$df,$item_list,$drawn_array;
 	global $item_list_parents,$AppUI;
 	global $user_list, $project_list, $company_list, $department_list;
 	global $marked;
@@ -251,25 +251,47 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</TD><TD>";
 	echo dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) );
 	
-/* cache lookup of company-names */
+/* lookup of company-name */
 	
 	echo "</TD><TD NOWRAP>";
 	echo dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) );
 	
-/* cache lookup of department names */
+/* lookup of department name */
 	
 	echo "</TD><TD>";
 	echo dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) );
 	
-/* cache lookup of user-names */
+/* lookup of user-name */
 	
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_user_username', $AppUI->_( "Unassigned" ) );
+	$username = dPgetParam( $item, 'inventory_user_username', '' );
+	if ( $username != '' )
+	{
+		echo '<A HREF="?m=inventory&';
+		echo 'quick_filter=user&quick_filter_id='.$item[ 'inventory_user' ].'" />';
+		echo $username;
+		echo '</A>';
+	}
+	else
+	{
+		echo $AppUI->_( "Unassigned" );
+	}
 	
-/* cache lookup of project-names */
+/* lookup of project-name */
 	
 	echo "</TD><TD>";
-	echo dPgetParam( $item, 'inventory_project_name', $AppUI->_( "Unassigned" ) );
+	$projname = dPgetParam( $item, 'inventory_project_name', '' );
+	if ( $projname != '' )
+	{
+		echo '<A HREF="?m=inventory&';
+		echo 'quick_filter=project&quick_filter_id='.$item[ 'inventory_project' ].'" />';
+		echo $projname;
+		echo '</A>';
+	}
+	else
+	{
+		echo $AppUI->_( "Unassigned" );
+	}
 	
 	echo "</TD><TD NOWRAP>";
 	
