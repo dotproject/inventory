@@ -1,0 +1,25 @@
+------- THINGS TO BE DONE -------
+
+* deal with deleting of parent (unlinking of children)
+
+* adding of existing item to another as sub-items
+
+* deleting of categories and brands
+
+* display of no. of sub-items on main index view
+
+* speed up of item searching for child display (make use of advanced SQL a little more)
+
+* paging of inventory list view for when no. of items is large
+
+* sorting of inventory list view
+
+* filtering of inventory list view by user
+
+* filtering of inventory list view by company
+
+* filtering of inventory list view by project
+
+* assignment change logging (change of ownership)
+
+* item booking/availability/expiry

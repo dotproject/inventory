@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.2 2003/11/07 09:25:03 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list;
 
@@ -42,6 +42,10 @@ if ( $inventory_parent )
 		
 		$parent_name = $parent->inventory_name;
 	}
+}
+else
+{
+	$inventory_parent = $obj->inventory_parent;
 }
 
 // check permissions for this record
@@ -99,13 +103,13 @@ if (!getDenyEdit( $m )) {
 
 $titleBlock->addCrumb( "?m=inventory", "inventory list" );
 if ($inventory_id) $titleBlock->addCrumb( "?m=inventory&a=view&inventory_id=$inventory_id", "view item" );
-if ($canDelete)	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
-if ($inventory_id) $titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_parent=$inventory_id", "add sub-item" );
 if ($inventory_parent)
 {
 	$titleBlock->addCrumb( "?m=inventory&a=view&inventory_id=$inventory_parent", "view parent" );
 	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_id=$inventory_parent", "edit parent" );
 }
+if ($inventory_id) $titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_parent=$inventory_id", "add sub-item" );
+if ($canDelete)	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
 $titleBlock->show();
 
 ?>
@@ -451,7 +455,9 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 			<TR>
 				<TD>
 					<?php echo $AppUI->_( "Company" ); ?>: <BR />
-					<SELECT NAME="inventory_company" ID="companylist" CLASS="text" ONCHANGE="javascript:changeList( this, dept_lists, 'departmentlist' )">
+					<SELECT NAME="inventory_company" ID="companylist"
+						CLASS="text" <?php if ( $inventory_parent ) echo "DISABLED "; ?>
+						ONCHANGE="javascript:changeList( this, dept_lists, 'departmentlist' )">
 					<?php
 						foreach( $company_list as $row )
 						{
@@ -463,7 +469,8 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 				</TD>
 				<TD>
 					<?php echo $AppUI->_( "Department" ); ?>: <BR />
-					<SELECT NAME="inventory_department" ID="departmentlist" CLASS="text" >
+					<SELECT NAME="inventory_department" ID="departmentlist"
+						CLASS="text" <?php if ( $inventory_parent ) echo "DISABLED "; ?> >
 					</SELECT>
 				</TD>
 			</TR>
