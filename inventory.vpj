@@ -41,4 +41,6 @@ vw_idx_categories.php
 vw_idx_items.php
 vw_idx_orders.php
 images\48_my_computer.png
+locales\en\inventory.inc
+locales\ja\inventory.inc
 [ASSOCIATION]
