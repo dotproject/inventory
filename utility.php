@@ -389,5 +389,40 @@ function array_csort()   //coded by Ichier2003
 }
 
 
+function sortHeader( $header, $field )
+{
+	global $AppUI;
+	global $sort_state;
+	
+	$a = dPgetParam( $_GET, 'a', "" );
+	
+	if ( !isset( $sort_state ) ) $sort_state = getSortState();
+	
+	echo "<TH NOWRAP>";
+	
+	$order = SORT_ASC;
+	if ( isset( $sort_state[ 'sort_item1' ] ) && $sort_state[ 'sort_item1' ] == $field )
+	{
+		$order = ( $sort_state[ 'sort_order1' ] == SORT_ASC ) ? SORT_DESC : SORT_ASC;
+		
+		if ( $sort_state[ 'sort_order1' ] == SORT_ASC ) echo '<img src="./images/icons/low.gif" width=13 height=16>';
+		else echo '<img src="./images/icons/1.gif" width=13 height=16>';
+		
+	}
+	
+	
+	
+	echo '<A STYLE="color: #fff" HREF="?m=inventory&';
+	if ( $a ) echo 'a='.$a.'&';
+	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.$_GET[ 'inventory_id' ].'&';
+	echo 'sort_item='.$field.'&sort_order='.$order.'">';
+	
+	echo $header;
+	
+	echo '</A>';
+	
+	echo "</TH>";
+}
+
 
 ?>

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.5 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.6 2003/11/28 10:16:20 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -24,7 +24,7 @@ if ( isset( $_POST[ "remember_marked" ] ) )
 		$AppUI->setState( 'InventoryIdxMarked', $_POST[ 'mark' ] );
 		$AppUI->setMsg( count( $_POST[ 'mark' ] )." ".$AppUI->_("items remembered" ), UI_MSG_OK );
 	}
-	else $AppUI->setMsg( $AppUI->_( "No items marked to remember" ), UI_MSG_ALERT );
+	else $AppUI->setMsg( "No items marked to remember" , UI_MSG_ALERT );
 	$AppUI->redirect();
 }
 
@@ -41,14 +41,14 @@ if ( isset( $_POST[ "remember_more" ] ) )
 							." (".$AppUI->_("Total").": ".count( $old_marks ).")"
 						, UI_MSG_OK );
 	}
-	else $AppUI->setMsg( $AppUI->_( "No items marked to remember" ), UI_MSG_ALERT );
+	else $AppUI->setMsg( "No items marked to remember", UI_MSG_ALERT );
 	$AppUI->redirect();
 }
 
 if ( isset( $_POST[ "remember_clear" ] ) )
 {
 	$AppUI->setState( 'InventoryIdxMarked', array() );
-	$AppUI->setMsg( $AppUI->_( "Marked Items Cleared" ), UI_MSG_OK );
+	$AppUI->setMsg( "Marked Items Cleared", UI_MSG_OK );
 	$AppUI->redirect();
 }
 
@@ -60,7 +60,7 @@ if ( isset( $_POST[ 'change_category_id' ] ) )
 	if ( $cat->load( $category_id ) )
 	{
 		$cat->inventory_category_name = $_POST[ 'change_category_name' ];
-		$AppUI->setMsg( $AppUI->_( "Category renamed" ), UI_MSG_ALERT );
+		$AppUI->setMsg( "Category renamed", UI_MSG_ALERT );
 		$cat->store();
 	}
 	else $AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
@@ -74,7 +74,7 @@ if ( isset( $_POST[ 'change_brand_id' ] ) )
 	if ( $brand->load( $brand_id ) )
 	{
 		$brand->inventory_brand_name = $_POST[ 'change_brand_name' ];
-		$AppUI->setMsg( $AppUI->_( "Brand renamed" ), UI_MSG_ALERT );
+		$AppUI->setMsg( "Brand renamed", UI_MSG_ALERT );
 		$brand->store();
 	}
 	else $AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
@@ -132,7 +132,7 @@ if ( $brand == -1 )
 	}
 	else
 	{
-		$AppUI->setMsg( $AppUI->_("Brand name must be longer than 1 character"), UI_MSG_ERROR );
+		$AppUI->setMsg( "Brand name must be longer than 1 character", UI_MSG_ERROR );
 		$AppUI->redirect();
 	}
 }
@@ -152,9 +152,17 @@ if ( $category == -1 )
 	}
 	else
 	{
-		$AppUI->setMsg( $AppUI->_("Category name must be longer than 1 characters"), UI_MSG_ERROR );
+		$AppUI->setMsg( "Category name must be longer than 1 character", UI_MSG_ERROR );
 		$AppUI->redirect();
 	}
+}
+
+// sanity check on inventory name (don't allow 0 or 1-letter names)
+
+if ( !isset( $_POST[ 'inventory_name' ] ) || strlen( $_POST[ 'inventory_name' ] ) < 2  )
+{
+	$AppUI->setMsg( "Inventory item name must be longer than 1 character", UI_MSG_ERROR );
+	$AppUI->redirect();
 }
 
 // load up existing data for checking later

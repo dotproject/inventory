@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.10 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.11 2003/11/28 10:16:20 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -172,7 +172,7 @@ function delIt()
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Purchase Type');?>:</TD>
 			<TD CLASS="hilite">
 			<?php
-				if ( $obj->inventory_rental_period == "1" ) echo $AppUI->_( 'One-off' );
+				if ( $obj->inventory_rental_period == "1" ) echo $AppUI->_( 'One-Off' );
 				else if ( $obj->inventory_rental_period == "M" ) echo $AppUI->_( 'Monthly' );
 				else if ( $obj->inventory_rental_period == "Y" ) echo $AppUI->_( 'Yearly' );
 			?>

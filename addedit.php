@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.10 2003/11/11 15:31:54 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.11 2003/11/28 10:16:19 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -132,7 +132,7 @@ if (!getDenyEdit( $m ))
 	if ( $inventory_id )
 	{
 		$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
-							  , '<form action ="?m=inventory&a=addedit&inventory_parent=$inventory_id" method="post">'
+							  , '<form action ="?m=inventory&a=addedit&inventory_parent='.$inventory_id.'" method="post">'
 							  , '</form>' );
 	}
 }
