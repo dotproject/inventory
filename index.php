@@ -1,15 +1,20 @@
-<?php /* INVENTORY $Id: index.php,v 1.6 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.7 2004/08/05 09:52:07 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
 include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 
-// check permissions for this module
-$canRead = !getDenyRead( $m );
-$canEdit = !getDenyEdit( $m );
+// check permissions for the inventory module
 
-if (!$canRead) {
+$perms =& $AppUI->acl();
+$canAccess = $perms->checkModule( $m, "access" );
+$canRead   = $perms->checkModule( $m, "view" );
+$canEdit   = $perms->checkModule( $m, "edit" );
+$canDelete = $perms->checkModule( $m, "delete" );
+$canAdd    = $perms->checkModule( $m, "add" );
+
+if (!$canRead || !$canAccess) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -117,7 +122,7 @@ $titleBlock->addCrumbRight(
 
 
 
-if ($canEdit) {
+if ($canAdd) {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('new inventory item').'">', '',
 		'<form action="?m=inventory&a=addedit&" method="post">', '</form>'

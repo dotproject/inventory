@@ -99,8 +99,8 @@ function load_all_items()
 		 , dept_name AS inventory_department_name
 		 , user_username AS inventory_user_username
 		 , project_name AS inventory_project_name
-		 , user_first_name AS inventory_user_first_name
-		 , user_last_name AS inventory_user_last_name
+		 , contact_first_name AS inventory_user_first_name
+		 , contact_last_name AS inventory_user_last_name
 		 FROM inventory
 		 LEFT JOIN inventory_categories ON inventory_category=inventory_category_id
 		 LEFT JOIN inventory_brands ON inventory_brand=inventory_brand_id
@@ -108,6 +108,7 @@ function load_all_items()
 		 LEFT JOIN departments ON inventory_department=dept_id
 		 LEFT JOIN users ON inventory_user=user_id
 		 LEFT JOIN projects ON inventory_project=project_id
+		 LEFT JOIN contacts ON contact_id=user_contact
 		";
 		
 	$sql .= "WHERE 1 \n";
@@ -238,12 +239,19 @@ function display_item( &$item, $indent, $children = 0 )
 	$drawn_array[ $item['inventory_id' ] ] = true;
 	
 	echo "<TR><TD>";
-	$canEdit = !getDenyEdit( $m, $item['inventory_id'] );
-	if ( $canEdit )
+
+	$perms =& $AppUI->acl();
+
+	$canEdit = $perms->checkModuleItem( $m, "edit", $item['inventory_id'] );
+	$canAdd = $perms->checkModuleItem( $m, "add", $item['inventory_id'] );
+
+	if ( $canAdd )
 	{
 		echo '<INPUT TYPE="checkbox" NAME="mark[]" VALUE="'.$item['inventory_id'].'" ';
 		echo (in_array( $item['inventory_id'], $marked )?"CHECKED":"").'>&nbsp;';
-		
+	}
+	if ( $canEdit )
+	{
 		echo '<A HREF="?m=inventory&a=addedit&inventory_id='.$item['inventory_id'].'">';
 		echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" ).'</A>';
 	}

@@ -9,6 +9,15 @@ if ( !isset( $inventory_view_mode ) ) $inventory_view_mode = "normal";
 
 error_reporting( E_ALL );
 
+// check permissions for the inventory module
+
+$perms =& $AppUI->acl();
+$canAccess = $perms->checkModule( $m, "access" );
+$canRead   = $perms->checkModule( $m, "view" );
+$canEdit   = $perms->checkModule( $m, "edit" );
+$canDelete = $perms->checkModule( $m, "delete" );
+$canAdd    = $perms->checkModule( $m, "add" );
+
 require_once( $AppUI->getModuleClass( "admin" ) );
 require_once( $AppUI->getModuleClass( "projects" ) );
 require_once( $AppUI->getModuleClass( "companies" ) );
@@ -21,11 +30,11 @@ $project_list = array();
 $company_list = array();
 $department_list = array();
 
+
 include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 load_all_items();
 
-$canEdit = !getDenyEdit( $m );
 
 
 
@@ -37,8 +46,14 @@ $canEdit = !getDenyEdit( $m );
 	<THEAD>
 	
 	<TR>
-		<TH><?php if ($canEdit) echo $AppUI->_( "Mark" )."/<BR />".$AppUI->_( "Edit" );?> </TH>
-		<?php
+		<TH><?php
+			if ($canEdit)
+			{
+				if ( $canAdd ) echo $AppUI->_( "Mark" )."/<BR />";
+				echo $AppUI->_( "Edit" );
+			}
+			?> </TH>
+			<?php
 			sortHeader( $AppUI->_( "Asset No" ), "inventory_id" );
 			sortHeader( $AppUI->_( "Item Name" )." (".$AppUI->_( "click for details" ).")", "inventory_name" );
 			sortHeader( $AppUI->_( "Brand" ), "inventory_brand_name" );
@@ -111,7 +126,7 @@ $canEdit = !getDenyEdit( $m );
 		<?php
 			$num_marked = count( get_marked_inventory() );
 		
-			if ( $canEdit )
+			if ( $canAdd )
 			{
 				echo '<INPUT TYPE="submit" class="button" name="remember_marked" VALUE="'.$AppUI->_( "Remember Marked" ).'"> ';
 				if ( $num_marked ) echo '<INPUT TYPE="submit" class="button" name="remember_more" VALUE="'.$AppUI->_( "Remember More" ).'"> ';

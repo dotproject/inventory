@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.6 2003/11/28 10:16:20 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.7 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -7,10 +7,17 @@ error_reporting( E_ALL );
 
 // deal with brand or category renaming
 
-$canEdit = !getDenyEdit( $m );
-$canRead = !getDenyRead( $m );
+// check permissions for this module
 
-if ( !$canEdit || !$canRead )
+$perms =& $AppUI->acl();
+$canAccess = $perms->checkModule( $m, "access" );
+$canEdit =   $perms->checkModule( $m, "edit" );
+$canRead =   $perms->checkModule( $m, "read" );
+$canDelete = $perms->checkModule( $m, "delete" );
+$canAdd =    $perms->checkModule( $m, "add" );
+
+
+if ( !$canEdit || !$canRead || !$canAccess )
 {
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
 	$AppUI->redirect();
@@ -90,8 +97,14 @@ $category = intval( isset( $_POST[ 'inventory_category' ] ) ? $_POST[ 'inventory
 $inventory_id = intval( isset( $_POST[ 'inventory_id' ] ) ? $_POST[ 'inventory_id' ] : 0 );
 
 // check permissions for this record
-$canRead = !getDenyRead( $m, $inventory_id );
-$canEdit = !getDenyEdit( $m, $inventory_id );
+
+if ( $inventory_id != 0)
+{
+	$canRead = $perms->checkModuleItem( $m, "read", $inventory_id );
+	$canEdit = $perms->checkModuleItem( $m, "edit", $inventory_id );
+	$canDelete = $perms->checkModuleItem( $m, "delete", $inventory_id );
+	$addSub = $perms->checkModuleItem( $m, "add", $inventory_id );
+}
 
 if ( !$canEdit || !$canRead )
 {
@@ -101,6 +114,11 @@ if ( !$canEdit || !$canRead )
 
 if ( $del )
 {
+	if ( !$canDelete )
+	{
+		$AppUI->setMsg( "No permission to delete", UI_MSG_ERROR, true );
+		$AppUI->redirect();
+	}
 	$AppUI->setMsg( 'Inventory Item' );
 	$obj = new CInventory();
 	
@@ -121,6 +139,12 @@ if ( $del )
 
 if ( $brand == -1 )
 {
+	if ( !$canAdd )
+	{
+		$AppUI->setMsg( "No permission to add new brand", UI_MSG_ERROR, true );
+		$AppUI->redirect();
+	}
+	
 	$newbrand = new CInventoryBrand();
 	$newbrand->inventory_brand_name = $_POST['inventory_newbrand'];
 	
@@ -141,6 +165,12 @@ if ( $brand == -1 )
 
 if ( $category == -1 )
 {
+	if ( !$canAdd )
+	{
+		$AppUI->setMsg( "No permission to add new category", UI_MSG_ERROR, true );
+		$AppUI->redirect();
+	}
+	
 	$newcat = new CInventoryCategory();
 	$newcat->inventory_category_name = $_POST['inventory_newcategory'];
 	
@@ -176,6 +206,14 @@ if ( $inventory_id )
 		$AppUI->setMsg( "invalidID", UI_MSG_ERROR );
 		$AppUI->redirect();
 	}
+}
+
+// permission to add a new inventory item?
+
+if ( !$canAdd && !$inventory_id )
+{
+	$AppUI->setMsg( "No permission to add new item", UI_MSG_ERROR, true );
+	$AppUI->redirect();
 }
 
 // now bind and write out new data

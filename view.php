@@ -1,9 +1,10 @@
-<?php /* INVENTORY $Id: view.php,v 1.14 2004/08/05 09:52:07 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.15 2004/08/17 09:21:17 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
 
 include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
+require_once( $AppUI->getModuleClass( 'contacts' ) );
 
 error_reporting( E_ALL );
 
@@ -17,8 +18,13 @@ require_once( $AppUI->getModuleClass( "departments" ) );
 $inventory_id = intval( dPgetParam( $_GET, "inventory_id", 0 ) );
 
 // check permissions for this record
-$canRead = !getDenyRead( $m, $inventory_id );
-$canEdit = !getDenyEdit( $m, $inventory_id );
+
+$perms =& $AppUI->acl();
+$canRead = $perms->checkModuleItem( $m, "view", $inventory_id );
+$canEdit = $perms->checkModuleItem( $m, "edit", $inventory_id );
+$canDelete = $perms->checkModuleItem( $m, "delete", $inventory_id );
+$canAdd    = $perms->checkModule( $m, "add" );
+$canAddSub = $perms->checkModuleItem( $m, "add", $inventory_id );
 
 if (!$canRead) $AppUI->redirect( "m=public&a=access_denied" );
 
@@ -34,7 +40,7 @@ if ( isset( $_GET['clearfilter'] ) && $_GET['clearfilter'] == 'yes' )
 
 $msg = '';
 $obj = new CInventory();
-$canDelete = $obj->canDelete( $msg, $inventory_id );
+$canDelete = $canDelete || $obj->canDelete( $msg, $inventory_id );
 
 if ( !$obj->load( $inventory_id ) )
 {
@@ -55,13 +61,17 @@ $until_date = new CDate( $obj->inventory_assign_until );
 
 $titleBlock = new CTitleBlock( "View Inventory Item", '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
-if (!getDenyEdit( $m ))
+if ( $canAdd )
 {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('new inventory item').'">', '',
 		'<form action="?m=inventory&a=addedit&" method="post">', '</form>'
 	);
-	
+}
+
+if ( $canAddSub)
+{
+
 	$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
 						  , '<form action ="?m=inventory&a=addedit&inventory_parent='.$obj->inventory_id.'" method="post">'
 						  , '</form>' );
@@ -84,7 +94,7 @@ if ( isset( $obj->inventory_parent ) && $obj->inventory_parent ) $titleBlock->ad
 if ( $canEdit )
 {
 	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_id=".$inventory_id, "edit this item" );
-	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
+	if ( $canDelete ) $titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
 	
 }
 
@@ -110,7 +120,7 @@ function delIt()
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
 	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
 	<?php
-		if ( $canEdit )
+		if ( $canDelete )
 		{
 			echo '<INPUT TYPE="checkbox" NAME="delete_children" VALUE="1" /> ';
 			echo $AppUI->_( "delete sub-items also" );
@@ -229,7 +239,8 @@ function delIt()
 			<TD CLASS="hilite">
 			<?php
 				$user = new CUser;
-				if ( $obj->inventory_user && $user->load( $obj->inventory_user ) ) echo $user->user_first_name." ".$user->user_last_name;
+				$contact = new CContact;
+				if ( $obj->inventory_user && $user->load( $obj->inventory_user ) && $contact->load( $user->user_contact ) ) echo $contact->contact_first_name." ".$contact->contact_last_name;
 				else echo $AppUI->_( "Unassigned" );
 				
 			?>

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.13 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.14 2004/08/17 09:21:17 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -93,13 +93,18 @@ else
 	$inventory_parent = $obj->inventory_parent;
 }
 
+$perms =& $AppUI->acl();
+
+$canAdd = $perms->checkModule( $m, "add" );
+$canEdit = $perms->checkModule( $m, "edit" );
+$canDelete = $perms->checkModule( $m, "delete" );
+
 // check permissions for this record
-if ( $inventory_id ) {
-	$canEdit = !getDenyEdit( $m, $inventory_id );
-}
-else
+if ( $inventory_id )
 {
-	$canEdit = ( !getDenyEdit( 'inventory' ) );
+	$canEdit = $perms->checkModuleItem( $m, "edit", $inventory_id );
+	$canDelete = $perms->checkModuleItem( $m, "delete", $inventory_id );
+	$canAddSub = $perms->checkModuleItem( $m, "add", $inventory_id );
 }
 
 if (!$canEdit) {
@@ -122,14 +127,14 @@ $title =  (($inventory_id)?"Edit Inventory Item":"Add Inventory Item");
 
 $titleBlock = new CTitleBlock( $title, '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
-if (!getDenyEdit( $m ))
+if ($canAdd)
 {
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('new inventory item').'">', '',
 		'<form action="?m=inventory&a=addedit&" method="post">', '</form>'
 	);
 	
-	if ( $inventory_id )
+	if ( $inventory_id && $canAddSub )
 	{
 		$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
 							  , '<form action ="?m=inventory&a=addedit&inventory_parent='.$inventory_id.'" method="post">'
@@ -237,9 +242,16 @@ function submitIt()
 	<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
+<?php
+	 if ( $canDelete )
+	 {
+?>
 	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
 		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="0" /> <?php echo $AppUI->_( "delete sub-items also" ); ?>
 	</DIV>
+<?php
+	 }
+?>
 </FORM>
 <FORM NAME="editFrm" action="?m=inventory&a=view&inventory_id="<?php echo $inventory_id; ?>" method="post" >
 	<INPUT NAME="dosql" TYPE ="hidden" VALUE="do_inventory_aed" />
@@ -444,8 +456,11 @@ function submitIt()
 					<SELECT NAME="inventory_user" CLASS="text">
 					<?php
 						$usersql = "
-						SELECT user_id, user_username, user_first_name, user_last_name
+						SELECT user_id, user_contact, user_username
+						, contact_first_name AS user_first_name
+						, contact_last_name AS user_last_name
 						FROM users
+						LEFT JOIN contacts ON contact_id=user_contact
 						";
 						
 						if (($rows = db_loadList( $usersql, NULL )))
