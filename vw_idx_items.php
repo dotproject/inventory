@@ -60,7 +60,7 @@ load_all_items();
 		
 	/* make sure orphaned items are also displayed */
 		
-		if (!$child_parent && 0)
+/*		if (!$child_parent && 0)
 		{
 			reset( $item_list );
 			foreach ($item_list as $item )
@@ -70,8 +70,34 @@ load_all_items();
 					display_item( $item, 0 );
 				}
 			}
-		}
+		}*/
 	?>
 </TBODY>	
 </TABLE>
+
+<?php
+		
+	global $company_list;
+	load_company_list();
+		
+	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
+	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
+	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+		
+	if ( $filter_company )
+	{
+		echo "<div>";
+		echo "(".$AppUI->_( "filtered by" )." ";
+		
+		echo $company_list[ $filter_company ][ 'company_name' ];
+		
+		if ( $filter_type !="choose" && $filter_index )
+		{
+			echo " ".$AppUI->_( "and" )." ".$AppUI->_( $filter_type )." = ".$filter_index;
+		}
+
+		echo ")";
+		echo "</div>";
+	}
+?>
 
