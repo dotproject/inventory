@@ -1,6 +1,7 @@
-<?php /* INVENTORY $Id: view.php,v 1.3 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.4 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
+
 
 include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
 
@@ -34,6 +35,9 @@ if ( !$obj->load( $inventory_id ) )
 }
 
 
+$AppUI->savePlace();
+
+
 $purchase_date = new CDate( $obj->inventory_purchased );
 $from_date = new CDate( $obj->inventory_assign_from );
 $until_date = new CDate( $obj->inventory_assign_until );
@@ -43,11 +47,17 @@ $until_date = new CDate( $obj->inventory_assign_until );
 
 $titleBlock = new CTitleBlock( $AppUI->_("View Inventory Item"), '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
-if (!getDenyEdit( $m )) {
+if (!getDenyEdit( $m ))
+{
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('new inventory item').'">', '',
 		'<form action="?m=inventory&a=addedit&" method="post">', '</form>'
 	);
+	
+	$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
+						  , '<form action ="?m=inventory&a=addedit&inventory_parent=$inventory_id" method="post">'
+						  , '</form>' );
+	
 }
 
 $titleBlock->addCrumb( "?m=inventory", "inventory list" );
@@ -56,7 +66,6 @@ if ( $canEdit )
 {
 	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_id=".$inventory_id, "edit this item" );
 	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
-	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_parent=$inventory_id", "add sub-item" );
 	
 }
 $titleBlock->show();

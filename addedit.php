@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.6 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.7 2003/11/10 03:04:42 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -79,11 +79,19 @@ $title .= (($parent_name)?(" (".$AppUI->_("Parent").": $parent_name)"):'');
 
 $titleBlock = new CTitleBlock( $title, '../modules/inventory/images/48_my_computer.png', $m, "$m.$a" );
 
-if (!getDenyEdit( $m )) {
+if (!getDenyEdit( $m ))
+{
 	$titleBlock->addCell(
 		'<input type="submit" class="button" value="'.$AppUI->_('new inventory item').'">', '',
 		'<form action="?m=inventory&a=addedit&" method="post">', '</form>'
 	);
+	
+	if ( $inventory_id )
+	{
+		$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
+							  , '<form action ="?m=inventory&a=addedit&inventory_parent=$inventory_id" method="post">'
+							  , '</form>' );
+	}
 }
 
 $titleBlock->addCrumb( "?m=inventory", "inventory list" );
@@ -93,7 +101,6 @@ if ($inventory_parent)
 	$titleBlock->addCrumb( "?m=inventory&a=view&inventory_id=$inventory_parent", "view parent" );
 	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_id=$inventory_parent", "edit parent" );
 }
-if ($inventory_id) $titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_parent=$inventory_id", "add sub-item" );
 if ($canDelete)	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
 $titleBlock->show();
 
@@ -190,7 +197,7 @@ function submitIt()
 		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="0" /> <?php echo $AppUI->_( "delete sub-tasks also" ); ?>
 	</DIV>
 </FORM>
-<FORM NAME="editFrm" action="?m=inventory&inventory_id="<?php echo $inventory_id ?>" method="post" >
+<FORM NAME="editFrm" action="?m=inventory&a=view&inventory_id="<?php echo $inventory_id; ?>" method="post" >
 	<INPUT NAME="dosql" TYPE ="hidden" VALUE="do_inventory_aed" />
 	<INPUT NAME="inventory_id" TYPE="hidden" VALUE="<?php echo $inventory_id; ?>" />
 	<INPUT NAME="inventory_parent" TYPE="hidden" VALUE="<?php echo $obj->inventory_parent; ?>" />

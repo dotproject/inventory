@@ -86,7 +86,7 @@ load_all_items();
 		
 	if ( $filter_company )
 	{
-		echo "<div>";
+		echo "<div style='font-size: 9px; padding-top: 4px;'>";
 		echo "(".$AppUI->_( "filtered by" )." ";
 		
 		echo $company_list[ $filter_company ][ 'company_name' ];
