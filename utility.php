@@ -7,6 +7,37 @@
 
 global $category_list,$brand_list;
 
+
+
+function array_csort()   //coded by Ichier2003
+{
+    $args = func_get_args();
+    $marray = array_shift($args);
+	
+	if ( empty( $marray )) return array();
+	
+	$i = 0;
+    $msortline = "return(array_multisort(";
+	$sortarr = array();
+    foreach ($args as $arg) {
+        $i++;
+        if (is_string($arg)) {
+            foreach ($marray as $row) {
+                $sortarr[$i][] = $row[$arg];
+            }
+        } else {
+            $sortarr[$i] = $arg;
+        }
+        $msortline .= "\$sortarr[".$i."],";
+    }
+    $msortline .= "\$marray));";
+
+    eval($msortline);
+    return $marray;
+}
+
+
+
 $sql = "SELECT * from inventory_categories where 1;";
 $category_list = db_loadList( $sql );
 echo db_error();
@@ -14,6 +45,11 @@ echo db_error();
 $sql = "SELECT * from inventory_brands where 1;";
 $brand_list = db_loadList( $sql );
 echo db_error();
+
+// sort the lists
+
+$category_list = array_csort( $category_list, "inventory_category_name", intval( SORT_ASC ) );
+$brand_list = array_csort( $brand_list, "inventory_brand_name", intval( SORT_ASC ) );
 
 
 function get_category_name( &$category_list, $catind )
@@ -367,32 +403,6 @@ function display_item( &$item, $indent, $children = 0 )
 }
 
 
-function array_csort()   //coded by Ichier2003
-{
-    $args = func_get_args();
-    $marray = array_shift($args);
-	
-	if ( empty( $marray )) return array();
-	
-	$i = 0;
-    $msortline = "return(array_multisort(";
-	$sortarr = array();
-    foreach ($args as $arg) {
-        $i++;
-        if (is_string($arg)) {
-            foreach ($marray as $row) {
-                $sortarr[$i][] = $row[$arg];
-            }
-        } else {
-            $sortarr[$i] = $arg;
-        }
-        $msortline .= "\$sortarr[".$i."],";
-    }
-    $msortline .= "\$marray));";
-
-    eval($msortline);
-    return $marray;
-}
 
 
 function sortHeader( $header, $field )

@@ -44,3 +44,6 @@ FINISHED
 
 * filtering of items with text string (search)
 + DONE
+
+* alphabetic sorting of Brand names and Category names
++ DONE
