@@ -1,46 +1,82 @@
-[GLOBAL]
-workingdir=.
-version=7.0
-packname=(None)
-MACRO=\n
-FILTERNAME=Source Files\nHeader Files\nBitmaps\nOther Files\n
-FILTERPATTERN=*.c;*.cpp;*.cxx;*.prg;*.pas;*.dpr;*.asm;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.vb;*.php\n*.inc\n*.bmp;*.gif;*.png\n*.*\n
-FILTERAPPCOMMAND=\n\n\n\n
-FILTERASSOCIATEFILETYPES=0 0 1 0 
-[CONFIGURATIONS]
-config=,Release
-[COMPILER.Release]
-compile=copts: concur|capture|savecurrent|menu: Compile:&Compilecmd: otheropts: 
-make=copts: concur|capture|saveworkspacefiles|menu: Build:&Buildcmd: otheropts: 
-rebuild=copts: concur|capture|saveworkspacefiles|menu: Rebuild:&Rebuildcmd: otheropts: 
-debug=copts: |menu: Debug:&Debugcmd: otheropts: 
-execute=copts: |menu: Execute:E&xecutecmd: "inventory.exe"otheropts: 
-includedirs=
-sysincludedirs=
-reffile=
-libs=
-outputfile=
-prebuildcmds=
-postbuildcmds=
-stoponprebuilderrors=0
-stoponpostbuilderrors=0
-[FILES]
-addedit.php
-do_inventory_aed.php
-index.html
-index.php
-inventory.class.php
-inventory.php
-javalists.php
-README.1ST
-setup.php
-TODO.txt
-utility.php
-view.php
-vw_idx_categories.php
-vw_idx_items.php
-vw_idx_orders.php
-images\48_my_computer.png
-locales\en\inventory.inc
-locales\ja\inventory.inc
-[ASSOCIATION]
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/9.1/vpj.dtd">
+<Project
+	Version="9.1"
+	VendorName="SlickEdit"
+	WorkingDir=".">
+	<Config Name="Release">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				RunFromDir="%rw">
+				<Exec/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				RunFromDir="%rw">
+				<Exec CmdLine='"inventory.exe"'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Files>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.cpp;*.cxx;*.prg;*.pas;*.dpr;*.asm;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.vb;*.php">
+			<F N="addedit.php"/>
+			<F N="do_inventory_aed.php"/>
+			<F N="index.html"/>
+			<F N="index.php"/>
+			<F N="inventory.class.php"/>
+			<F N="inventory.php"/>
+			<F N="javalists.php"/>
+			<F N="setup.php"/>
+			<F N="utility.php"/>
+			<F N="view.php"/>
+			<F N="vw_idx_categories.php"/>
+			<F N="vw_idx_items.php"/>
+			<F N="vw_idx_orders.php"/>
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.inc">
+			<F N="locales/en/inventory.inc"/>
+			<F N="locales/ja/inventory.inc"/>
+		</Folder>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp;*.gif;*.png">
+			<F N="images/48_my_computer.png"/>
+		</Folder>
+		<Folder
+			Name="Other Files"
+			Filters="">
+			<F N="README.1ST"/>
+			<F N="TODO.txt"/>
+		</Folder>
+	</Files>
+</Project>

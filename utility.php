@@ -2,39 +2,12 @@
 
 // common functions and variables used by the inventory module
 
+require_once( $AppUI->getModuleClass( 'tasks' ) );
+
 
 // load up the category and brand lists
 
 global $category_list,$brand_list;
-
-
-
-function array_csort()   //coded by Ichier2003
-{
-    $args = func_get_args();
-    $marray = array_shift($args);
-	
-	if ( empty( $marray )) return array();
-	
-	$i = 0;
-    $msortline = "return(array_multisort(";
-	$sortarr = array();
-    foreach ($args as $arg) {
-        $i++;
-        if (is_string($arg)) {
-            foreach ($marray as $row) {
-                $sortarr[$i][] = $row[$arg];
-            }
-        } else {
-            $sortarr[$i] = $arg;
-        }
-        $msortline .= "\$sortarr[".$i."],";
-    }
-    $msortline .= "\$marray));";
-
-    eval($msortline);
-    return $marray;
-}
 
 
 
