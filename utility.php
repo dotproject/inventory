@@ -44,9 +44,26 @@ global $item_list, $drawn_array, $item_list_parents;
 
 function load_all_items()
 {
-	global $item_list, $item_list_parents;
+	global $item_list, $item_list_parents, $AppUI;
 	
-	$sql = "SELECT * from inventory where 1;";
+	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
+	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
+	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+	
+	$sql = "SELECT * from inventory\n";
+	
+	if ( $filter_company )
+	{
+		$sql .= "WHERE inventory_company = $filter_company \n";
+		
+		if ( $filter_index && $filter_type != "choose" )
+		{
+			$sql .= "AND inventory_${filter_type} = $filter_index";
+		}
+	}
+	
+	
+	
 	$sql_list = db_loadList( $sql );
 	echo db_error();
 	
@@ -64,8 +81,32 @@ function load_all_items()
 		}
 	}
 	
+}
+
+// load up accessible company list
+
+function load_company_list()
+{
+	global $company_list;
 	
+	$compsql = "
+	SELECT company_id, company_name
+	FROM companies
+	";
+		
+	$company_list = array();
 	
+	if (($rows = db_loadList( $compsql, NULL )))
+	{
+		foreach ($rows as $row)
+		{
+			if ( !getDenyRead( "companies", $row[ 'company_id' ] ) )
+			{
+		/* store it for later use */
+				$company_list[ $row[ "company_id" ] ] = $row;
+			}
+		}
+	}
 }
 
 function display_item( &$item, $indent, $children = 0 )

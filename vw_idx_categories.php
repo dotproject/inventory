@@ -1,6 +1,6 @@
 <?php
 
-global $m,$category_list,$a;
+global $m,$category_list,$brand_list, $a;
 
 error_reporting( E_ALL );
 

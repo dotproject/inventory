@@ -1,6 +1,6 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.4 2003/11/08 06:51:48 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.5 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
 
-global $m,$a,$ttl,$category_list,$brand_list;
+global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
 include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
 
@@ -69,26 +69,7 @@ $from_date = new CDate( $obj->inventory_assign_from );
 $until_date = new CDate( $obj->inventory_assign_until );
 
 
-// load up accessible company list
-
-$compsql = "
-SELECT company_id, company_name
-FROM companies
-";
-	
-$company_list = array();
-
-if (($rows = db_loadList( $compsql, NULL )))
-{
-	foreach ($rows as $row)
-	{
-		if ( !getDenyRead( "companies", $row[ 'company_id' ] ) )
-		{
-	/* store it for later use */
-			$company_list[ $row[ "company_id" ] ] = $row;
-		}
-	}
-}
+load_company_list();
 
 
 // show title block
@@ -184,164 +165,15 @@ function submitIt()
    	form.submit();
 }
 
-function getElementById( _id )
-{
-	if (isDOM)
-	{
-	  return document.getElementById(_id);
-	}
-	else if (isIE)
-	{
-	  eval( "return document.all."+_id+" ;" );
-	}
-	else if(isNS4)
-	{
-	  eval("return document.layers['"+_id+" ;" );
-	}
-}
-
-function emptyList( box )
-{
-	// Set each option to null thus removing it
-	while ( box.options.length ) box.options[0] = null;
-}
-
-// This function assigns new drop down options to the given
-// drop down box from the list of lists specified
-
-function fillList( box, arr, _selected ) {
-	// arr[0] holds the display text
-	// arr[1] are the values
-	
-	if ( typeof _selected == "undefined" ) _selected = 0;
-	
-	box.selectedIndex=0;
-	
-	try
-	{
-		for ( i = 0; i < arr[0].length; i++ ) {
-
-			// Create a new drop down option with the
-			// display text and value from arr
-
-			option = new Option( arr[0][i], arr[1][i] );
-
-			// Add to the end of the existing options
-
-			box.options[box.length] = option;
-			
-			if ( arr[1][i] == _selected)
-			{
-				box.selectedIndex=i;
-			}
-		}
-	}
-	catch( error )
-	{
-		option = new Option( <?php echo '"'.$AppUI->_( "Non Applicable" ).'"'; ?>, 0 );
-		box.options[ box.length ] = option;
-	}
-
-}
-
-// This function performs a drop down list option change by first
-// emptying the existing option list and then assigning a new set
-
-function changeList( box, lists, id, _selected )
-{
-	// Isolate the appropriate list by using the value
-	// of the currently selected option
-	
-	if ( typeof selected == "undefined" ) selected = 0;
-
-	list = lists[box.options[box.selectedIndex].value];
-
-	// Next empty the slave list
-
-	destination =  getElementById( id );
-	emptyList( destination );
-
-	// Then assign the new list values
-
-	fillList( destination, list, _selected );
-}
-
-
-
-
-// create javascript variables to populate the department and users dialogs
-// based on security settings and dynamic form selection
-
-var dept_lists = new Array();
-
-// load up list of departments per company
-// and set them into javascript variables
-
-<?php
-
-$deptsql = "
-SELECT dept_id, dept_name, dept_company
-FROM departments
-";
-
-if (($sql_list = db_loadList( $deptsql, NULL )))
-{
-// create quick index table
-	
-	$dept_list = array();
-	foreach ( $sql_list as $row )
-	{
-		$dept_list[ $row[ "dept_id" ] ] = $row;
-	}
-	
-// create quick index table for departments' companies
-	
-	$dept_company_list = array();
-	reset( $dept_list );
-	foreach( $dept_list as $dept )
-	{
-		$dept_company_list[ $dept[ "dept_company" ] ][] = $dept[ "dept_id" ];
-	}
-	
-// now go through each company in turn
-	
-	reset( $dept_company_list );
-	foreach ( $dept_company_list as $key => $dept_company )
-	{
-		echo "dept_lists[ ".$key." ] = Array(); ";
-		
-		$nametext = "dept_lists[ ".$key." ][0] = new Array( ";
-		$valuetext = "dept_lists[ ".$key." ][1] = new Array( ";
-		
-		$lastval = end($dept_company);
-		reset( $dept_company );
-		
-// and go through each department within that company
-		
-		foreach( $dept_company as $dept_id )
-		{
-			$nametext .= '"'.$dept_list[ $dept_id ][ "dept_name" ].'"';
-			$valuetext .= $dept_id;
-			if ( $lastval != $dept_id )
-			{
-				$nametext .= ", ";
-				$valuetext .= ", ";
-			}
-			
-		}
-		
-		echo $nametext." );\n";
-		echo $valuetext." );\n";
-	}
-}
-
-?>
 
 -->
 </SCRIPT>
 
 
-<TABLE BORDER="0" CELLPADDING="4" WIDTH="100%" CLASS="std">
+<?php include_once("{$AppUI->cfg['root_dir']}/modules/inventory/javalists.php"); ?>
+
+
+<TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0" WIDTH="100%" CLASS="std">
 <FORM NAME="frmDelete" ACTION="./index.php?m=inventory" METHOD="post">
 	<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
@@ -463,7 +295,7 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 		<?php echo $AppUI->_( "Owner" );?>:<BR />
 		<TABLE BORDER="1" CELLPADDING="4" WIDTH="100%" >
 			<TR>
-				<TD>
+				<TD WIDTH="50%">
 					<?php echo $AppUI->_( "Company" ); ?>: <BR />
 					<SELECT NAME="inventory_company" ID="companylist"
 						CLASS="text" <?php if ( $inventory_parent ) echo "DISABLED "; ?>
@@ -477,10 +309,10 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 					?>
 					</SELECT>
 				</TD>
-				<TD>
+				<TD WIDTH="50%">
 					<?php echo $AppUI->_( "Department" ); ?>: <BR />
 					<SELECT NAME="inventory_department" ID="departmentlist"
-						CLASS="text" <?php if ( $inventory_parent ) echo "DISABLED "; ?> >
+						CLASS="text" style="width: 200px" <?php if ( $inventory_parent ) echo "DISABLED "; ?> >
 					</SELECT>
 				</TD>
 			</TR>
@@ -489,7 +321,7 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 		<?php echo $AppUI->_( "Assigned to" );?>:<BR />
 		<TABLE BORDER="1" CELLPADDING="4" WIDTH="100%" >
 			<TR>
-				<TD>
+				<TD WIDTH="50%">
 					<?php echo $AppUI->_( "Project" ); ?>: <BR />
 					<SELECT NAME="inventory_project" CLASS="text">
 					<?php
@@ -507,15 +339,15 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 								if ( !getDenyRead( "projects", $row[ 'project_id' ] ) )
 								{
 									$project_list[ $row[ "project_id" ] ] = $row;
-									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>").$row["project_name"];
+									echo "<OPTION VALUE='".$row["project_id"].(($inventory_id && $row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>").$row["project_name"];
 								}
 							}
 						}
 					?>
-					<OPTION VALUE="0"><?php echo $AppUI->_( "Unassigned" ); ?>
+					<OPTION VALUE="0" <?php if (!$inventory_id || ( $inventory_id && !$obj->inventory_project ) ) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
 				</TD>
-				<TD>
+				<TD WIDTH="50%">
 					<?php echo $AppUI->_( "User" ); ?>: <BR />
 					<SELECT NAME="inventory_user" CLASS="text">
 					<?php
@@ -529,12 +361,12 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 							foreach ($rows as $row)
 							{
 								$username = $row["user_first_name"]." ".$row["user_last_name"];
-								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
+								echo "<OPTION VALUE='".$row["user_id"].(($inventory_id && $row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
 							}
 						}
 				
 					?>
-					<OPTION VALUE="0"><?php echo $AppUI->_( "Unassigned" ); ?>
+					<OPTION VALUE="0" <?php if (!$inventory_id || ( $inventory_id && !$obj->inventory_user )) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
 				</TD>
 			</TR>

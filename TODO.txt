@@ -17,11 +17,15 @@
 * sorting of inventory list view
 
 * filtering of inventory list view by user
-
 * filtering of inventory list view by company
-
 * filtering of inventory list view by project
++ made the Filter drop down list
+  ( drop down lists change depending on company and type of filter - user/departments/projects )
+  seems to be all working
+  DONE
 
 * assignment change logging (change of ownership)
++ added assigned date range
 
 * item booking/availability/expiry
+

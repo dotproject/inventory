@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.2 2003/11/08 06:51:48 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.3 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -85,7 +85,7 @@ function delIt()
 	</DIV>
 </FORM>
 
-<TR VALIGN="top">
+<TR >
 	<TD WIDTH="50%">
 		<TABLE WIDTH="100%" CELLSPACING="1" CELLPADDING="2">
 		<TR>
@@ -163,12 +163,25 @@ function delIt()
 			<TD NOWRAP COLSPAN="2"><STRONG><?php echo $AppUI->_('Assigned To');?></STRONG></TD>
 		</TR>
 		<TR>
-			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('User');?>:</TD>
-			<TD CLASS="hilite"> <?php $user = new CUser; if ( $user->load( $obj->inventory_user ) ) echo $user->user_first_name." ".$user->user_last_name; ?></TD>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Project');?>:</TD>
+			<TD CLASS="hilite">
+			<?php
+				$project = new CProject;
+				if ($obj->inventory_project && $project->load( $obj->inventory_project )) echo $project->project_name;
+				else echo $AppUI->_( "Unassigned" );
+			?>
+			</TD>
 		</TR>
 		<TR>
-			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Project');?>:</TD>
-			<TD CLASS="hilite"> <?php $project = new CProject; if ($project->load( $obj->inventory_project )) echo $project->project_name; ?></TD>
+			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('User');?>:</TD>
+			<TD CLASS="hilite">
+			<?php
+				$user = new CUser;
+				if ( $obj->inventory_user && $user->load( $obj->inventory_user ) ) echo $user->user_first_name." ".$user->user_last_name;
+				else echo $AppUI->_( "Unassigned" );
+				
+			?>
+			</TD>
 		</TR>
 		<TR>
 			<TD ALIGN="right" NOWRAP><?php echo $AppUI->_('Assign From');?>:</TD>
