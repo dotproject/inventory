@@ -93,7 +93,7 @@ $canEdit = !getDenyEdit( $m );
 		
 		global $drawn_array;
 		
-		if (!$child_parent )
+		if (!$child_parent || $child_parent=="all" )
 		{
 			reset( $item_list );
 			foreach ($item_list as $item )
@@ -142,6 +142,7 @@ $canEdit = !getDenyEdit( $m );
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+	$filter_search  = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : 0;
 		
 	if ( $filter_company )
 	{
@@ -164,6 +165,11 @@ $canEdit = !getDenyEdit( $m );
 			echo $company_list[ $filter_company ][ 'company_name' ];
 		}
 
+	}
+	
+	if ( $filter_search )
+	{
+		echo " (search: $filter_search)";
 	}
 	
 	if ( $div_begun ) echo "</div>";

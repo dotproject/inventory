@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: index.php,v 1.3 2003/11/10 09:11:17 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.4 2003/11/14 11:51:19 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
@@ -29,7 +29,7 @@ if ( isset( $_GET[ 'quick_filter' ] ) )
 	$AppUI->setState( 'InventoryIdxFilterCompany', $row[0][ 'company_id' ] );
 	$AppUI->setState( 'InventoryIdxFilterType', $_GET[ 'quick_filter' ] );
 	$AppUI->setState( 'InventoryIdxFilterIndex', $_GET[ 'quick_filter_id' ] );
-	
+	$AppUI->setState( 'InventoryIdxFilterSearch', $_GET[ 'quick_filter_search' ] );
 }
 
 // retrieve any state parameters
@@ -46,8 +46,14 @@ if (isset( $_POST['f2'] )) {
 	$AppUI->setState( 'InventoryIdxFilterType', $_POST['f2'] );
 	$AppUI->setState( 'InventoryIdxFilterIndex', $_POST['f3'] );
 }
+
+if (isset( $_POST['f4'] )) {
+	$AppUI->setState( 'InventoryIdxFilterSearch', $_POST['f4'] );
+}
+
 $f2 = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 'choose';
 $f3 = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 'na';
+$f4 = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : '';
 
 global $specify_company;
 $specify_company = $f1;
@@ -78,6 +84,9 @@ $titleBlock->addCrumbRight(
 		. arraySelect( $filters2, 'f2', 'size=1 class=text style="width: 100px" id="itemList2" onChange="'."javascript:changeListByType( 'itemList1', 'itemList2', 'itemList3', 0, '".$AppUI->_( "Choose..." )."' );".'"', $f2, true )
 		. arraySelect( $filters3, 'f3', 'size=1 class=text style="width: 100px" id="itemList3" onChange="document.itemFilter2.submit();"', $f3, true )
 		. "</form></TD>"
+		. '<TD><form action="?m=inventory" method="post" id="itemFilter3" name="itemFilter3">'
+		. "<INPUT TYPE='text' size='10' name='f4' onChange='document.itemFilter3.submit();' value='$f4'>"
+		. '</FORM></TD>'
 	
 	, 'ALIGN="right"'
 	, '<table BORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="right"><TR>'

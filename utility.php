@@ -82,6 +82,7 @@ function load_all_items()
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+	$filter_search  = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : 0;
 	
 	$sql =
 		"SELECT inventory.*, inventory_category_name, inventory_brand_name
@@ -121,6 +122,11 @@ function load_all_items()
 	else
 	{
 		$sql .= "AND ( inventory_purchase_state IS NULL OR inventory_purchase_state = 'A' )  \n";
+	}
+	
+	if ( $filter_search != "" )
+	{
+		$sql .= "AND ( CONCAT(inventory_name,inventory_category_name,inventory_brand_name,inventory_description) LIKE '%$filter_search%' )   \n";
 	}
 	
 	

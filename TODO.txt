@@ -42,3 +42,5 @@ FINISHED
 + seems to be all working
 + DONE
 
+* filtering of items with text string (search)
++ DONE
