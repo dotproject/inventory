@@ -69,7 +69,8 @@ load_all_items();
 			{
 				if ( !isset( $drawn_array[ $item[ 'inventory_id' ] ] ) )
 				{
-					display_item( $item, 0 );
+					$item[ 'inventory_name' ] = $item[ 'inventory_name' ] . " (" . $AppUI->_( "parent not shown" ) . ")" ;
+					display_item( $item, ($item[ 'inventory_parent' ] ) ? 1 : 0 );
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 ##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
-"Mark",
+"parent not shown",
 "Add Inventory Item",
 "All Companies",
 "Asset No",
@@ -29,6 +29,7 @@
 "Inventory Items",
 "Item Name",
 "Leave blank to use default",
+"Mark",
 "Monthly",
 "NA",
 "Notes",

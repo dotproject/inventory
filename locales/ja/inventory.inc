@@ -52,5 +52,6 @@
 "inventory list"=>"棚卸表リスト",
 "new inventory item"=>"新備品",
 "new sub-item"=>"新子備品",
+"parent not shown"=>"親非表示",
 "update"=>"変更",
 "view item"=>"備品表示",

@@ -130,7 +130,7 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 	else printf( "%06d", $item['inventory_id'] );
 	
-	echo "</TD><TD WIDTH='100%'>";
+	echo "</TD><TD WIDTH='100%' NOWRAP>";
 	for ($y=0; $y < $indent; $y++) {
 		if ($y+1 == $indent) {
 			echo '<img src="./images/corner-dots.gif" width="16" height="12" border="0">';
