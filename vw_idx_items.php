@@ -1,8 +1,8 @@
 <?php
 
-global $m,$df,$item_list,$AppUI;
-
+global $m,$df,$item_list,$sorted_item_list,$AppUI;
 global $user_list, $project_list, $company_list, $department_list;
+global $sort_state;
 
 error_reporting( E_ALL );
 
@@ -24,6 +24,42 @@ load_all_items();
 
 $canEdit = !getDenyEdit( $m );
 
+
+function sortHeader( $header, $field )
+{
+	global $AppUI;
+	global $sort_state;
+	
+	$a = dPgetParam( $_GET, 'a', "" );
+	
+	if ( !isset( $sort_state ) ) $sort_state = getSortState();
+	
+	echo "<TH NOWRAP>";
+	
+	$order = SORT_ASC;
+	if ( isset( $sort_state[ 'sort_item1' ] ) && $sort_state[ 'sort_item1' ] == $field )
+	{
+		$order = ( $sort_state[ 'sort_order1' ] == SORT_ASC ) ? SORT_DESC : SORT_ASC;
+		
+		if ( $sort_state[ 'sort_order1' ] == SORT_ASC ) echo '<img src="./images/icons/low.gif" width=13 height=16>';
+		else echo '<img src="./images/icons/1.gif" width=13 height=16>';
+		
+	}
+	
+	
+	
+	echo '<A STYLE="color: #fff" HREF="?m=inventory&';
+	if ( $a ) echo 'a='.$a.'&';
+	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.$_GET[ 'inventory_id' ].'&';
+	echo 'sort_item='.$field.'&sort_order='.$order.'">';
+	
+	echo $header;
+	
+	echo '</A>';
+	
+	echo "</TH>";
+}
+
 ?>
 
 
@@ -33,7 +69,19 @@ $canEdit = !getDenyEdit( $m );
 	
 	<TR>
 		<TH><?php if ($canEdit) echo $AppUI->_( "Mark" )."/<BR />".$AppUI->_( "Edit" );?> </TH>
-		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
+		<?php
+			sortHeader( $AppUI->_( "Asset No" ), "inventory_id" );
+			sortHeader( $AppUI->_( "Item Name" )." (".$AppUI->_( "click for details" ).")", "inventory_name" );
+			sortHeader( $AppUI->_( "Brand" ), "inventory_brand_name" );
+			sortHeader( $AppUI->_( "Category" ), "inventory_category_name" );
+			sortHeader( $AppUI->_( "Company" ), "inventory_company_name" );
+			sortHeader( $AppUI->_( "Department" ), "inventory_department_name" );
+			sortHeader( $AppUI->_( "Assigned to" ), "inventory_user_username" );
+			sortHeader( $AppUI->_( "Project" ), "inventory_project_name" );
+			sortHeader( $AppUI->_( "Date" ), "inventory_purchased" );
+			sortHeader( $AppUI->_( "Cost" ), "inventory_totalcost" );
+		?>
+<!--		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
 		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click for details").")"; ?></TH>
 		<TH><?php echo $AppUI->_( "Brand" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Category" ); ?></TH>
@@ -42,7 +90,7 @@ $canEdit = !getDenyEdit( $m );
 		<TH><?php echo $AppUI->_( "Assigned to" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Project" ); ?></TH>
 		<TH><?php echo $AppUI->_( "Date" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Cost" ); ?></TH>
+		<TH><?php echo $AppUI->_( "Cost" ); ?></TH>-->
 	</TR>
 	</THEAD>
 	<TBODY>
@@ -51,8 +99,12 @@ $canEdit = !getDenyEdit( $m );
 		$child_parent = 0;
 		if ( isset( $_GET[ "children" ] ) ) $child_parent = $_GET[ "children" ];
 		
-		reset( $item_list );
-		foreach ($item_list as $item)
+	// auto-close children if over 100 items to be displayed
+		
+		if ( !$child_parent && count( $item_list ) < 100 ) $child_parent = "all";
+		
+		reset( $sorted_item_list );
+		foreach ($sorted_item_list as $item)
 		{
 			if ( (!$item['inventory_parent'] && (!$child_parent || $child_parent == "all"))
 				 || ( $child_parent && $child_parent == $item['inventory_parent' ] ) )

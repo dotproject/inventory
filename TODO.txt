@@ -2,11 +2,7 @@ TODO
 
 * deleting of categories and brands (and re-categorising of items using the deleted categories/brands)
 
-* speed up of item searching for child display (make use of advanced SQL a little more)
-
 * paging of inventory list view for when no. of items is large
-
-* sorting of inventory list view
 
 * item booking/availability/expiry
 
@@ -16,10 +12,17 @@ IN PROGRESS
 * assignment change logging (change of assignment)
 + added assigned date range
 
-* automatic inheritance of assignment change by sub-item (if previous assignment was same)
+* speed up of item searching for child display (make use of advanced SQL a little more)
++ using JOIN LEFT for cross-indexing category/company/brand/project/user names
 
 
 FINISHED
+
+* automatic inheritance of assignment change by sub-item (if previous assignment was same)
++ DONE
+
+* sorting of inventory list view
++ DONE (sorting with secondary sort by clicking on column header)
 
 * adding of existing item to another as sub-items
 + DONE (marking memory system)

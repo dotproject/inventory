@@ -40,17 +40,63 @@ function get_brand_name( &$brand_list, $braind )
 	return( $AppUI->_( "Brand not found" ) );
 }
 
-global $item_list, $drawn_array, $item_list_parents;
+// gets the current sort state (and sets it if specified in $_GET
+
+function getSortState()
+{
+	global $AppUI;
+	$sort_state = array();
+	if ( $AppUI->getState( 'InventoryIdxSortState' ) )
+	{
+		$sort_state = $AppUI->getState( 'InventoryIdxSortState' );
+	}
+	
+	if ( isset( $_GET[ 'sort_item' ] ) )
+	{
+		if ( isset( $sort_state[ 'sort_item1' ] ) )
+		{
+			if ( !isset( $sort_state[ 'sort_item2' ] ) || $sort_state[ 'sort_item1' ] != $sort_state[ 'sort_item2' ] )
+			{
+				$sort_state[ 'sort_item2' ] = $sort_state[ 'sort_item1' ];
+				$sort_state[ 'sort_order2' ] = $sort_state[ 'sort_order1' ];
+			}
+		}
+		
+		$sort_state[ 'sort_item1' ] = $_GET[ 'sort_item' ];
+		$sort_state[ 'sort_order1' ] = dPgetParam( $_GET, 'sort_order', 0 );
+		
+		$AppUI->setState( 'InventoryIdxSortState', $sort_state );
+	}
+	return $sort_state;
+}
+
+global $item_list, $drawn_array, $item_list_parents, $sort_state;
 
 function load_all_items()
 {
 	global $item_list, $item_list_parents, $AppUI;
+	global $sorted_item_list;
 	
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
 	
-	$sql = "SELECT * from inventory\n";
+	$sql =
+		"SELECT inventory.*, inventory_category_name, inventory_brand_name
+		 , company_name AS inventory_company_name
+		 , dept_name AS inventory_department_name
+		 , user_username AS inventory_user_username
+		 , project_name AS inventory_project_name
+		 , user_first_name AS inventory_user_first_name
+		 , user_last_name AS inventory_user_last_name
+		 FROM inventory
+		 LEFT JOIN inventory_categories ON inventory_category=inventory_category_id
+		 LEFT JOIN inventory_brands ON inventory_brand=inventory_brand_id
+		 LEFT JOIN companies ON inventory_company=company_id
+		 LEFT JOIN departments ON inventory_department=dept_id
+		 LEFT JOIN users ON inventory_user=user_id
+		 LEFT JOIN projects ON inventory_project=project_id
+		";
 	
 	if ( $filter_company )
 	{
@@ -82,6 +128,25 @@ function load_all_items()
 			$item_list_parents[ $item[ 'inventory_parent' ] ][] = $item[ 'inventory_id' ];
 		}
 	}
+	
+// sort the list
+	
+	global $sort_state;
+	if ( !isset( $sort_state ) ) $sort_state = getSortState();
+	
+	if ( isset( $sort_state[ 'sort_item1' ] ) )
+	{
+		if ( isset( $sort_state[ 'sort_item2' ] ) )
+		{
+			$sorted_item_list = array_csort( $item_list, $sort_state['sort_item1'], intval( $sort_state['sort_order1'] )
+											 , $sort_state[ 'sort_item2' ], intval( $sort_state['sort_order2'] ) );
+		}
+		else
+		{
+			$sorted_item_list = array_csort( $item_list, $sort_state['sort_item1'], intval($sort_state['sort_order1']) );
+		}
+	}
+	else $sorted_item_list = array_csort( $item_list, 'inventory_id' );
 	
 }
 
@@ -181,54 +246,30 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</A>";
 	
 	echo "</TD><TD>";
-	echo get_brand_name( $brand_list, $item['inventory_brand'] );
+	echo dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) );
 	
 	echo "</TD><TD>";
-	echo get_category_name( $category_list, $item['inventory_category'] );
+	echo dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) );
 	
 /* cache lookup of company-names */
 	
 	echo "</TD><TD NOWRAP>";
-	if ( !isset( $company_list[ $item[ 'inventory_company' ] ] ) )
-	{
-		$company = new CCompany();
-		$company_list[ $item[ 'inventory_company' ] ] = ( ( $company->load( $item[ 'inventory_company' ] ) )
-													? $company->company_name : $AppUI->_( "Unknown" ) );
-	}
-	echo $company_list[ $item[ 'inventory_company' ] ];
+	echo dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) );
 	
 /* cache lookup of department names */
 	
 	echo "</TD><TD>";
-	if ( !isset( $department_list[ $item[ 'inventory_department' ] ] ) )
-	{
-		$dept = new CDepartment();
-		$department_list[ $item[ 'inventory_department' ] ] = ( ( $dept->load( $item[ 'inventory_department' ] ) )
-													? $dept->dept_name : $AppUI->_( "Unknown" ) );
-	}
-	echo $department_list[ $item[ 'inventory_department' ] ];
+	echo dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) );
 	
 /* cache lookup of user-names */
 	
 	echo "</TD><TD NOWRAP>";
-	if ( !isset( $user_list[ $item[ 'inventory_user' ] ] ) )
-	{
-		$user = new CUser();
-		$user_list[ $item[ 'inventory_user' ] ] = ( ( $user->load( $item[ 'inventory_user' ] ) )
-													? $user->user_first_name." ".$user->user_last_name : $AppUI->_( "Unassigned" ) );
-	}
-	echo $user_list[ $item[ 'inventory_user' ] ];
+	echo dPgetParam( $item, 'inventory_user_username', $AppUI->_( "Unassigned" ) );
 	
 /* cache lookup of project-names */
 	
-	echo "</TD><TD NOWRAP>";
-	if ( !isset( $project_list[ $item[ 'inventory_project' ] ] ) )
-	{
-		$proj = new CProject();
-		$project_list[ $item[ 'inventory_project' ] ] = ( ( $proj->load( $item[ 'inventory_project' ] ) )
-													? $proj->project_name : $AppUI->_( "Unassigned" ) );
-	}
-	echo $project_list[ $item[ 'inventory_project' ] ];
+	echo "</TD><TD>";
+	echo dPgetParam( $item, 'inventory_project_name', $AppUI->_( "Unassigned" ) );
 	
 	echo "</TD><TD NOWRAP>";
 	
@@ -267,6 +308,29 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 }
 
+
+function array_csort()   //coded by Ichier2003
+{
+    $args = func_get_args();
+    $marray = array_shift($args);
+	$i = 0;
+    $msortline = "return(array_multisort(";
+    foreach ($args as $arg) {
+        $i++;
+        if (is_string($arg)) {
+            foreach ($marray as $row) {
+                $sortarr[$i][] = $row[$arg];
+            }
+        } else {
+            $sortarr[$i] = $arg;
+        }
+        $msortline .= "\$sortarr[".$i."],";
+    }
+    $msortline .= "\$marray));";
+
+    eval($msortline);
+    return $marray;
+}
 
 
 

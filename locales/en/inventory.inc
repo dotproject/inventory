@@ -1,7 +1,7 @@
 ##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
-"parent not shown",
+"add remembered",
 "Add Inventory Item",
 "All Companies",
 "Asset No",
@@ -17,6 +17,7 @@
 "Category Name",
 "Choose...",
 "Classification",
+"Clear Marked",
 "Cost",
 "Cost Code",
 "Date",
@@ -38,6 +39,8 @@
 "Purchase Date",
 "Purchase Info",
 "Purchase Type",
+"Remember Marked",
+"Remember More",
 "Serial No",
 "Sub-items",
 "Unassigned",
@@ -51,7 +54,9 @@
 "edit this item",
 "filtered by",
 "inventory list",
+"items remembered",
 "new inventory item",
 "new sub-item",
+"parent not shown",
 "update",
 "view item",
