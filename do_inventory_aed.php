@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.0 2003/11/02 19:39:50 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -50,9 +50,10 @@ if ( isset( $_POST[ 'change_brand_id' ] ) )
 
 
 $del = isset($_POST['del']) ? $_POST['del'] : 0;
-$brand = intval( $_POST[ 'inventory_brand' ] );
-$category = intval( $_POST[ 'inventory_category' ] );
-$inventory_id = intval( $_POST[ 'inventory_id' ] );
+$del_children = isset($_POST['delete_children']) ? $_POST['delete_children'] : 0;
+$brand = intval( isset( $_POST[ 'inventory_brand' ] ) ? $_POST[ 'inventory_brand' ] : 0 );
+$category = intval( isset( $_POST[ 'inventory_category' ] ) ? $_POST[ 'inventory_category' ] : 0 );
+$inventory_id = intval( isset( $_POST[ 'inventory_id' ] ) ? $_POST[ 'inventory_id' ] : 0 );
 
 // check permissions for this record
 $canRead = !getDenyRead( $m, $inventory_id );
@@ -69,7 +70,7 @@ if ( $del )
 	$AppUI->setMsg( 'Inventory Item' );
 	$obj = new CInventory();
 	
-	if ( ($msg = $obj->delete( $inventory_id )) )
+	if ( ($msg = $obj->delete( $inventory_id, $del_children )) )
 	{
 		$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		$AppUI->redirect();

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.2 2003/11/07 09:25:03 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.3 2003/11/08 03:33:04 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list;
 
@@ -342,8 +342,10 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 	<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
+	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
+		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="0" /> <?php echo $AppUI->_( "delete sub-tasks also" ); ?>
+	</DIV>
 </FORM>
-
 <FORM NAME="editFrm" action="?m=inventory&inventory_id="<?php echo $inventory_id ?>" method="post" >
 	<INPUT NAME="dosql" TYPE ="hidden" VALUE="do_inventory_aed" />
 	<INPUT NAME="inventory_id" TYPE="hidden" VALUE="<?php echo $inventory_id; ?>" />
@@ -546,12 +548,39 @@ if (($sql_list = db_loadList( $deptsql, NULL )))
 </TABLE>
 
 
+<BR /><BR />
+
+<?php
+if ( $inventory_id )
+{
+	echo "<STRONG>".$AppUI->_("Sub-items").":</STRONG><BR />";
+	$_GET[ 'children' ] = $inventory_id;
+	include_once("{$AppUI->cfg['root_dir']}/modules/inventory/vw_idx_items.php");
+	echo '<DIV style="text-align: right; padding: 4px; font-size: 14px;">';
+		
+	echo $AppUI->_( "Grand Total" );
+	echo ":&nbsp;&nbsp;&nbsp;";
+	echo $obj->inventory_cost + $obj->calcChildrenTotal( );
+		
+	echo '</DIV>';
+}
+
+?>
+
+
+
 
 <SCRIPT LANGUAGE="JavaScript">
 <!--
 EnableDisable( 'category' );
 EnableDisable( 'brand' );
-changeList( getElementById( "companylist" ), dept_lists, 'departmentlist', <?php echo $obj->inventory_department; ?> );
+<?php
+	if ( $inventory_id )
+	{
+		echo "changeList( getElementById( 'companylist' ), dept_lists, 'departmentlist', "
+			.$obj->inventory_department," );";
+	}
+?>
 
 -->
 </SCRIPT>

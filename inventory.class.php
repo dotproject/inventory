@@ -87,6 +87,32 @@ class CInventory extends CDpObject
 		}
 		return sprintf( "%06d", $this->inventory_id );
 	}
+	
+// if "delete_children" is true then all children are also deleted
+	
+	function delete( $idx, $delete_children = 0 )
+	{
+		$sql = "SELECT inventory_id FROM inventory WHERE inventory_parent=".$idx;
+		$child_list = db_loadList( $sql );
+		
+		foreach ( $child_list as $row )
+		{
+			if ( $delete_children )	// recursive delete of children
+			{
+				$this->delete( $row[ "inventory_id" ], $delete_children );
+			}
+			else
+			{
+				$child = new CInventory();
+				if ( $child->load( $row[ "inventory_id" ] ) )
+				{
+					$child->inventory_parent = 0;
+					$child->store();
+				}
+			}
+		}
+		parent::delete( $idx );
+	}
 }
 
 

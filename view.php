@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.00 2003/11/03 15:36:24 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -78,6 +78,9 @@ function delIt()
 	<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
 	<INPUT TYPE="hidden" NAME="inventory_id" VALUE="<?php echo $inventory_id;?>" />
+	<DIV STYLE="text-align: right; padding-bottom: 8px; padding-top: 0px;" >
+		<INPUT TYPE="checkbox" NAME="delete_children" VALUE="1" /> <?php echo $AppUI->_( "delete sub-tasks also" ); ?>
+	</DIV>
 </FORM>
 
 <TR VALIGN="top">

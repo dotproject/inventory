@@ -71,7 +71,7 @@ function load_all_items()
 function display_item( &$item, $indent, $children = 0 )
 {
 	global $m,$brand_list,$category_list,$df,$item_list,$drawn_array;
-	global $item_list_parents;
+	global $item_list_parents,$AppUI;
 	
 	$drawn_array[ $item['inventory_id' ] ] = 1;
 	
@@ -94,7 +94,14 @@ function display_item( &$item, $indent, $children = 0 )
 			echo '<img src="./images/shim.gif" width="16" height="12"  border="0">';
 		}
 	}
-	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}'>{$item['inventory_name']}</A>";
+	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}'>";
+	echo $item['inventory_name'];
+	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
+	{
+		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );
+		echo "&nbsp;&nbsp;&nbsp;(".$num." ".(($num == 1)?$AppUI->_( "sub-item" ):$AppUI->_( "sub-items" )).")";
+	}
+	echo "</A>";
 	
 	echo "</TD><TD NOWRAP>";
 	echo get_brand_name( $brand_list, $item['inventory_brand'] );

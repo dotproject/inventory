@@ -1,12 +1,14 @@
 ------- THINGS TO BE DONE -------
 
 * deal with deleting of parent (unlinking of children)
++ DONE (added checkbox to delete all children, if not checked, children are unlinked and made root items)
 
 * adding of existing item to another as sub-items
 
 * deleting of categories and brands
 
 * display of no. of sub-items on main index view
++ DONE
 
 * speed up of item searching for child display (make use of advanced SQL a little more)
 
