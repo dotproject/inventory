@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: inventory.php,v 1.1.1.1 2003/11/07 02:10:40 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: inventory.php,v 1.2 2003/11/28 10:16:20 dylan_cuthbert Exp $ */
 GLOBAL $m, $a, $project_id, $f, $min_view, $query_string, $durnTypes,$canRead,$canEdit;
 /*
 	inventory.php
@@ -27,7 +27,7 @@ if (isset( $_GET['tab'] )) {
 $tab = $AppUI->getState( 'InventoryVwTab' ) !== NULL ? $AppUI->getState( 'InventoryVwTab' ) : 0;
 
 // tabbed information boxes
-$tabBox = new CTabBox( "?m=inventory", "{$AppUI->cfg['root_dir']}/modules/inventory/", $tab );
+$tabBox = new CTabBox( "?m=inventory", "{$dPconfig['root_dir']}/modules/inventory/", $tab );
 $tabBox->add( 'vw_idx_items', 'Inventory Items' );
 $tabBox->add( 'vw_idx_orders', 'Orders' );
 $tabBox->add( 'vw_idx_categories', 'Categories/Brands' );

@@ -1,8 +1,8 @@
-<?php /* INVENTORY $Id: index.php,v 1.4 2003/11/14 11:51:19 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.5 2004/03/05 08:17:55 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 
 // check permissions for this module
@@ -107,8 +107,8 @@ $titleBlock->show();
 
 $AppUI->savePlace();
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/javalists.php");
-include("{$AppUI->cfg['root_dir']}/modules/inventory/inventory.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/javalists.php");
+include("{$dPconfig['root_dir']}/modules/inventory/inventory.php");
 
 ?>
 

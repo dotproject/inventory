@@ -21,7 +21,7 @@ $project_list = array();
 $company_list = array();
 $department_list = array();
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 load_all_items();
 

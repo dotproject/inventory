@@ -4,7 +4,7 @@ global $m,$category_list,$brand_list, $a;
 
 error_reporting( E_ALL );
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 $canEdit = !getDenyEdit( $m );
 

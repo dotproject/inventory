@@ -1,8 +1,8 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.11 2003/11/28 10:16:19 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.12 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 error_reporting( E_ALL );
 
@@ -149,11 +149,11 @@ $titleBlock->show();
 
 ?>
 
-<link rel="stylesheet" type="text/css" media="all" href="<?php echo $AppUI->cfg['base_url'];?>/lib/calendar/calendar-dp.css" title="blue" />
+<link rel="stylesheet" type="text/css" media="all" href="<?php echo $dPconfig['base_url'];?>/lib/calendar/calendar-dp.css" title="blue" />
 <!-- import the calendar script -->
-<script type="text/javascript" src="<?php echo $AppUI->cfg['base_url'];?>/lib/calendar/calendar.js"></script>
+<script type="text/javascript" src="<?php echo $dPconfig['base_url'];?>/lib/calendar/calendar.js"></script>
 <!-- import the language module -->
-<script type="text/javascript" src="<?php echo $AppUI->cfg['base_url'];?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
+<script type="text/javascript" src="<?php echo $dPconfig['base_url'];?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
 <script LANGUAGE="JavaScript">
 <!--		
@@ -229,7 +229,7 @@ function submitIt()
 </SCRIPT>
 
 
-<?php include_once("{$AppUI->cfg['root_dir']}/modules/inventory/javalists.php"); ?>
+<?php include_once("{$dPconfig['root_dir']}/modules/inventory/javalists.php"); ?>
 
 
 <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0" WIDTH="100%" CLASS="std">
@@ -513,7 +513,7 @@ if ( $inventory_id )
 {
 	echo "<STRONG>".$AppUI->_("Sub-items").":</STRONG><BR />";
 	$_GET[ 'children' ] = $inventory_id;
-	include_once("{$AppUI->cfg['root_dir']}/modules/inventory/vw_idx_items.php");
+	include_once("{$dPconfig['root_dir']}/modules/inventory/vw_idx_items.php");
 	echo '<DIV style="text-align: right; padding: 4px; font-size: 14px;">';
 		
 	echo $AppUI->_( "Grand Total" );

@@ -1,9 +1,9 @@
-<?php /* INVENTORY $Id: view.php,v 1.11 2003/11/28 10:16:20 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.12 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
 
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 error_reporting( E_ALL );
 
@@ -249,7 +249,7 @@ function delIt()
 			
 echo "<STRONG>".$AppUI->_("Sub-items").":</STRONG><BR />";
 $_GET[ 'children' ] = $inventory_id;
-include_once("{$AppUI->cfg['root_dir']}/modules/inventory/vw_idx_items.php");
+include_once("{$dPconfig['root_dir']}/modules/inventory/vw_idx_items.php");
 
 ?>
 
