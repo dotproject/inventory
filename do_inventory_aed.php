@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.7 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.8 2004/11/27 12:14:23 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -12,12 +12,12 @@ error_reporting( E_ALL );
 $perms =& $AppUI->acl();
 $canAccess = $perms->checkModule( $m, "access" );
 $canEdit =   $perms->checkModule( $m, "edit" );
-$canRead =   $perms->checkModule( $m, "read" );
+$canView =   $perms->checkModule( $m, "view" );
 $canDelete = $perms->checkModule( $m, "delete" );
 $canAdd =    $perms->checkModule( $m, "add" );
 
 
-if ( !$canEdit || !$canRead || !$canAccess )
+if ( !$canEdit || !$canView || !$canAccess )
 {
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
 	$AppUI->redirect();
@@ -100,13 +100,13 @@ $inventory_id = intval( isset( $_POST[ 'inventory_id' ] ) ? $_POST[ 'inventory_i
 
 if ( $inventory_id != 0)
 {
-	$canRead = $perms->checkModuleItem( $m, "read", $inventory_id );
+	$canView = $perms->checkModuleItem( $m, "view", $inventory_id );
 	$canEdit = $perms->checkModuleItem( $m, "edit", $inventory_id );
 	$canDelete = $perms->checkModuleItem( $m, "delete", $inventory_id );
 	$addSub = $perms->checkModuleItem( $m, "add", $inventory_id );
 }
 
-if ( !$canEdit || !$canRead )
+if ( !$canEdit || !$canView )
 {
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
 	$AppUI->redirect();
