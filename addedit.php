@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.8 2003/11/10 06:33:16 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.9 2003/11/10 09:11:17 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -8,6 +8,45 @@ error_reporting( E_ALL );
 
 $inventory_id = intval( dPgetParam( $_GET, "inventory_id", 0 ) );
 $inventory_parent = intval( dPgetParam( $_GET, "inventory_parent", 0 ) );
+$add_remembered = intval( dPgetParam( $_GET, "add_remembered", 0 ) );
+
+// if add_remembered is true, recall the marked items and
+// add them to the parent item
+
+if ( $add_remembered && $inventory_parent )
+{
+	$parent = new CInventory();
+	if ( !$parent->load( $inventory_parent ) )
+	{
+		$AppUI->setMsg( "invalidID", UI_MSG_ERROR );
+		$AppUI->redirect();
+	}
+	$marked = get_marked_inventory();
+	
+	$msg = ((count( $marked ) > 1) ? $AppUI->_( "Items" ) : $AppUI->_( "Item" ))." ";
+	
+	foreach( $marked as $id )
+	{
+		$obj = new CInventory();
+		if ( $obj->load( $id ) )
+		{
+			if ( $obj->inventory_id != $inventory_parent )
+			{
+			// inherit ownership and assignments
+				$obj->inventory_parent = $inventory_parent;
+				$obj->inventory_company = $parent->inventory_company;
+				$obj->inventory_department = $parent->inventory_department;
+				$obj->inventory_user = $parent->inventory_user;
+				$obj->inventory_project = $parent->inventory_project;
+				$obj->store();
+				$msg .= $id. ", ";
+			}
+		}
+	}
+	$msg .= " ".$AppUI->_( "added to Item" )." ".$inventory_parent;
+	$AppUI->setMsg( $msg, UI_MSG_OK );
+	$AppUI->redirect();
+}
 
 $msg = '';
 $obj = new CInventory();
@@ -201,13 +240,22 @@ function submitIt()
 	<INPUT NAME="inventory_id" TYPE="hidden" VALUE="<?php echo $inventory_id; ?>" />
 	<INPUT NAME="inventory_parent" TYPE="hidden" VALUE="<?php echo $obj->inventory_parent; ?>" />
 <TR>
-	<TD COLSPAN="2">
+	<TD>
 		<?php
 			if ( $inventory_id )
 			{
 				echo "<span style='font-size: large;'>".$AppUI->_("Asset No").": ";
 				echo $obj->getAssetNo();
 				echo "</span><BR /><BR />";
+			}
+		?>
+	</TD>
+	<TD ALIGN="right">
+		<?php
+			if ( $inventory_parent )
+			{
+				echo '<INPUT TYPE="checkbox" NAME="unlink_from_parent" VALUE="1">';
+				echo "&nbsp;".$AppUI->_( "unlink from parent" );
 			}
 		?>
 	</TD>
@@ -353,12 +401,12 @@ function submitIt()
 								if ( !getDenyRead( "projects", $row[ 'project_id' ] ) )
 								{
 									$project_list[ $row[ "project_id" ] ] = $row;
-									echo "<OPTION VALUE='".$row["project_id"].(($inventory_id && $row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>").$row["project_name"];
+									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>").$row["project_name"];
 								}
 							}
 						}
 					?>
-					<OPTION VALUE="0" <?php if (!$inventory_id || ( $inventory_id && !$obj->inventory_project ) ) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
+					<OPTION VALUE="0" <?php if ( !$obj->inventory_project ) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
 				</TD>
 				<TD WIDTH="50%">
@@ -375,12 +423,12 @@ function submitIt()
 							foreach ($rows as $row)
 							{
 								$username = $row["user_first_name"]." ".$row["user_last_name"];
-								echo "<OPTION VALUE='".$row["user_id"].(($inventory_id && $row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
+								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
 							}
 						}
 				
 					?>
-					<OPTION VALUE="0" <?php if (!$inventory_id || ( $inventory_id && !$obj->inventory_user )) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
+					<OPTION VALUE="0" <?php if (!$obj->inventory_user) echo "SELECTED "; ?>><?php echo $AppUI->_( "Unassigned" ); ?>
 					</SELECT>
 				</TD>
 			</TR>

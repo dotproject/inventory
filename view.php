@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.8 2003/11/11 01:55:29 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.9 2003/11/11 03:14:57 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -56,6 +56,17 @@ if (!getDenyEdit( $m ))
 						  , '<form action ="?m=inventory&a=addedit&inventory_parent='.$obj->inventory_id.'" method="post">'
 						  , '</form>' );
 	
+	$marked = get_marked_inventory();
+	if ( !empty( $marked ) )
+	{
+		if ( !in_array( $inventory_id, $marked ) )
+		{
+			$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('add remembered').' ('.count( $marked ).')">'
+								  , ''
+								  , '<form action ="?m=inventory&a=addedit&add_remembered=1&inventory_parent='.$obj->inventory_id.'" method="post">'
+								  , '</form>' );
+		}
+	}
 }
 
 $titleBlock->addCrumb( "?m=inventory", "inventory list" );
@@ -66,8 +77,8 @@ if ( $canEdit )
 	$titleBlock->addCrumbDelete( 'delete item', $canDelete, $msg );
 	
 }
-$titleBlock->show();
 
+$titleBlock->show();
 
 ?>
 
@@ -82,7 +93,7 @@ function delIt()
 
 </SCRIPT>
 
-<TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0" WIDTH="100%" CLASS="std" >
+<TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0" WIDTH="100%" CLASS="std">
 <FORM NAME="frmDelete" ACTION="./index.php?m=inventory" METHOD="post">
 	<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />
 	<INPUT TYPE="hidden" NAME="del" VALUE="1" />
@@ -98,7 +109,7 @@ function delIt()
 	</DIV>
 </FORM>
 
-<TR >
+<TR style="vertical-align: top ">
 	<TD WIDTH="50%">
 		<TABLE WIDTH="100%" CELLSPACING="1" CELLPADDING="2">
 		<TR>

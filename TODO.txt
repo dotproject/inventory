@@ -1,14 +1,6 @@
-------- THINGS TO BE DONE -------
+TODO
 
-* deal with deleting of parent (unlinking of children)
-+ DONE (added checkbox to delete all children, if not checked, children are unlinked and made root items)
-
-* adding of existing item to another as sub-items
-
-* deleting of categories and brands
-
-* display of no. of sub-items on main index view
-+ DONE
+* deleting of categories and brands (and re-categorising of items using the deleted categories/brands)
 
 * speed up of item searching for child display (make use of advanced SQL a little more)
 
@@ -16,16 +8,33 @@
 
 * sorting of inventory list view
 
+* item booking/availability/expiry
+
+
+IN PROGRESS
+
+* assignment change logging (change of assignment)
++ added assigned date range
+
+* automatic inheritance of assignment change by sub-item (if previous assignment was same)
+
+
+FINISHED
+
+* adding of existing item to another as sub-items
++ DONE (marking memory system)
+
+* deal with deleting of parent (unlinking of children)
++ DONE (added checkbox to delete all children, if not checked, children are unlinked and made root items)
+
+* display of no. of sub-items on main index view
++ DONE
+
 * filtering of inventory list view by user
 * filtering of inventory list view by company
 * filtering of inventory list view by project
 + made the Filter drop down list
   ( drop down lists change depending on company and type of filter - user/departments/projects )
-  seems to be all working
-  DONE
-
-* assignment change logging (change of ownership)
-+ added assigned date range
-
-* item booking/availability/expiry
++ seems to be all working
++ DONE
 

@@ -111,17 +111,50 @@ function load_company_list()
 	}
 }
 
+
+// returns array of marked inventory ids
+
+function get_marked_inventory( )
+{
+	global $AppUI;
+	
+	$marked_inventory = array();
+	
+	if ( isset( $_POST[ "mark" ] ) ) $AppUI->setState( 'InventoryIdxMarked', $_POST[ 'mark' ] );
+	$marked_inventory = $AppUI->getState( 'InventoryIdxMarked' ) != NULL ? $AppUI->getState( 'InventoryIdxMarked' ) : array();
+		
+	return $marked_inventory;
+}
+
+
+// displays a table row containing the item's information
+
 function display_item( &$item, $indent, $children = 0 )
 {
 	global $m,$brand_list,$category_list,$df,$item_list,$drawn_array;
 	global $item_list_parents,$AppUI;
 	global $user_list, $project_list, $company_list, $department_list;
+	global $marked;
+	
+// load up the marked array
+	
+	if ( !isset( $marked ) )
+	{
+		$marked = get_marked_inventory();
+	}
 	
 	$drawn_array[ $item['inventory_id' ] ] = true;
 	
-	echo "<TR><TD>";
+	echo "<TR ".(in_array( $item['inventory_id'], $marked )?" style='font-weight: bold'":"")."><TD>";
 	$canEdit = !getDenyEdit( $m, $item['inventory_id'] );
-	if ( $canEdit ) echo '<A HREF="?m=inventory&a=addedit&inventory_id='.$item['inventory_id'].'">'.dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" ).'</A>';
+	if ( $canEdit )
+	{
+		echo '<INPUT TYPE="checkbox" NAME="mark[]" VALUE="'.$item['inventory_id'].'" ';
+		echo (in_array( $item['inventory_id'], $marked )?"CHECKED":"").'>&nbsp;';
+		
+		echo '<A HREF="?m=inventory&a=addedit&inventory_id='.$item['inventory_id'].'">';
+		echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" ).'</A>';
+	}
 		
 	echo "</TD><TD>";
 	if ( isset( $item['inventory_asset_no']) && $item['inventory_asset_no'])
@@ -143,14 +176,14 @@ function display_item( &$item, $indent, $children = 0 )
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
 		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );
-		echo "&nbsp;&nbsp;&nbsp;(".$num." ".(($num == 1)?$AppUI->_( "sub-item" ):$AppUI->_( "sub-items" )).")";
+		echo "<BR />(".$num." ".(($num == 1)?$AppUI->_( "sub-item" ):$AppUI->_( "sub-items" )).")";
 	}
 	echo "</A>";
 	
-	echo "</TD><TD NOWRAP>";
+	echo "</TD><TD>";
 	echo get_brand_name( $brand_list, $item['inventory_brand'] );
 	
-	echo "</TD><TD NOWRAP>";
+	echo "</TD><TD>";
 	echo get_category_name( $category_list, $item['inventory_category'] );
 	
 /* cache lookup of company-names */
@@ -166,7 +199,7 @@ function display_item( &$item, $indent, $children = 0 )
 	
 /* cache lookup of department names */
 	
-	echo "</TD><TD NOWRAP>";
+	echo "</TD><TD>";
 	if ( !isset( $department_list[ $item[ 'inventory_department' ] ] ) )
 	{
 		$dept = new CDepartment();
@@ -225,11 +258,16 @@ function display_item( &$item, $indent, $children = 0 )
 			reset( $item_list_parents[ $item[ 'inventory_id' ] ] );
 			foreach ( $item_list_parents[ $item[ 'inventory_id' ] ] as $id )
 			{
-				display_item( $item_list[ $id ], $indent+1, $children );
+				if ( !isset( $drawn_array[ $id ] ) )
+				{
+					display_item( $item_list[ $id ], $indent+1, $children );
+				}
 			}
 		}
 	}
 }
+
+
 
 
 ?>

@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.3 2003/11/08 08:55:11 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: do_inventory_aed.php,v 1.4 2003/11/10 03:04:42 dylan_cuthbert Exp $ */
 
 global $m;
 
@@ -8,14 +8,53 @@ error_reporting( E_ALL );
 // deal with brand or category renaming
 
 $canEdit = !getDenyEdit( $m );
+$canRead = !getDenyRead( $m );
+
+if ( !$canEdit || !$canRead )
+{
+	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
+	$AppUI->redirect();
+}
+
+
+if ( isset( $_POST[ "remember_marked" ] ) )
+{
+	if ( isset( $_POST[ "mark" ] ) )
+	{
+		$AppUI->setState( 'InventoryIdxMarked', $_POST[ 'mark' ] );
+		$AppUI->setMsg( count( $_POST[ 'mark' ] )." ".$AppUI->_("items remembered" ), UI_MSG_OK );
+	}
+	else $AppUI->setMsg( $AppUI->_( "No items marked to remember" ), UI_MSG_ALERT );
+	$AppUI->redirect();
+}
+
+if ( isset( $_POST[ "remember_more" ] ) )
+{
+	if ( isset( $_POST[ "mark" ] ) )
+	{
+		$old_marks = $AppUI->getState( 'InventoryIdxMarked' ) ? $AppUI->getState( 'InventoryIdxMarked' ) : array();
+		$old_marks = array_unique( array_merge( $old_marks, $_POST[ "mark" ] ) );
+		$AppUI->setState( 'InventoryIdxMarked', $old_marks );
+		
+		$AppUI->setMsg( count( $_POST[ 'mark' ] )." "
+							.$AppUI->_("new items remembered" )
+							." (".$AppUI->_("Total").": ".count( $old_marks ).")"
+						, UI_MSG_OK );
+	}
+	else $AppUI->setMsg( $AppUI->_( "No items marked to remember" ), UI_MSG_ALERT );
+	$AppUI->redirect();
+}
+
+if ( isset( $_POST[ "remember_clear" ] ) )
+{
+	$AppUI->setState( 'InventoryIdxMarked', array() );
+	$AppUI->setMsg( $AppUI->_( "Marked Items Cleared" ), UI_MSG_OK );
+	$AppUI->redirect();
+}
+
 
 if ( isset( $_POST[ 'change_category_id' ] ) )
 {
-	if ( !$canEdit )
-	{
-		$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-		$AppUI->redirect();
-	}
 	$category_id = intval( $_POST[ 'change_category_id' ] );
 	$cat = new CInventoryCategory();
 	if ( $cat->load( $category_id ) )
@@ -30,11 +69,6 @@ if ( isset( $_POST[ 'change_category_id' ] ) )
 
 if ( isset( $_POST[ 'change_brand_id' ] ) )
 {
-	if ( !$canEdit )
-	{
-		$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-		$AppUI->redirect();
-	}
 	$brand_id = intval( $_POST[ 'change_brand_id' ] );
 	$brand = new CInventoryBrand();
 	if ( $brand->load( $brand_id ) )
@@ -123,16 +157,28 @@ if ( $category == -1 )
 	}
 }
 
-$obj = new CInventory();
+// load up existing data for checking later
 
+$oldobj = new CInventory();
+
+if ( $inventory_id )
+{
+	if ( !$oldobj->load( $inventory_id ) )
+	{
+		$AppUI->setMsg( "invalidID", UI_MSG_ERROR );
+		$AppUI->redirect();
+	}
+}
+
+// now bind and write out new data
+
+$obj = new CInventory();
 
 if (!$obj->bind( $_POST ))
 {
 	$AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
 	$AppUI->redirect();
 }
-
-print_r( $_POST );
 
 /* convert dates to SQL format */
 
@@ -145,9 +191,44 @@ $obj->inventory_assign_from = $date->format( FMT_DATETIME_MYSQL );
 $date = new CDate( $obj->inventory_assign_until );
 $obj->inventory_assign_until = $date->format( FMT_DATETIME_MYSQL );
 
+if ( isset( $_POST[ 'unlink_from_parent' ] ) && $_POST[ 'unlink_from_parent' ] )
+{
+	$obj->inventory_parent = 0;
+}
 
 if ( !$obj->store() ) $AppUI->setMsg( $obj->getError(), UI_MSG_ERROR );
 
-$AppUI->redirect();
+// go through children and re-assign them
+
+function reassign( $oldobj, $newobj, $id = 0 )
+{
+	if ( $id == 0 ) $id = $newobj->inventory_id;
+	
+	$sql = "SELECT inventory_id FROM inventory WHERE inventory_parent=$id";
+	if ( $children = db_loadList( $sql ) )
+	{
+		foreach ( $children as $child_id )
+		{
+			$child = new CInventory();
+			if ( $child->load( $child_id[ 'inventory_id' ] ) )
+			{
+				if ( $child->inventory_user == $oldobj->inventory_user ) $child->inventory_user = $newobj->inventory_user;
+				if ( $child->inventory_project == $oldobj->inventory_project ) $child->inventory_project = $newobj->inventory_project;
+				$child->store();
+				reassign( $oldobj, $newobj, $child->inventory_id );
+			}
+		}
+	}
+}
+
+if ( $inventory_id )
+{
+	reassign( $oldobj, $obj );
+}
+
+if ( $inventory_id || $obj->inventory_parent )
+{
+	$AppUI->redirect();
+}
 
 ?>

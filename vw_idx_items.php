@@ -1,6 +1,6 @@
 <?php
 
-global $m,$df,$item_list;
+global $m,$df,$item_list,$AppUI;
 
 global $user_list, $project_list, $company_list, $department_list;
 
@@ -22,14 +22,17 @@ include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
 
 load_all_items();
 
+$canEdit = !getDenyEdit( $m );
+
 ?>
 
 
-
 <TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" WIDTH="100%" >
+<FORM ACTION="?m=inventory" METHOD="post" ID="markForm">
 	<THEAD>
+	
 	<TR>
-		<TH></TH>
+		<TH><?php if ($canEdit) echo $AppUI->_( "Mark" )."/<BR />".$AppUI->_( "Edit" );?> </TH>
 		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
 		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click for details").")"; ?></TH>
 		<TH><?php echo $AppUI->_( "Brand" ); ?></TH>
@@ -75,11 +78,36 @@ load_all_items();
 			}
 		}
 	?>
-</TBODY>	
+<TR>
+	<TD COLSPAN="11">
+		<?php
+			$num_marked = count( get_marked_inventory() );
+		
+			if ( $canEdit )
+			{
+				echo '<INPUT TYPE="submit" class="button" name="remember_marked" VALUE="'.$AppUI->_( "Remember Marked" ).'"> ';
+				if ( $num_marked ) echo '<INPUT TYPE="submit" class="button" name="remember_more" VALUE="'.$AppUI->_( "Remember More" ).'"> ';
+				echo '<INPUT TYPE="submit" class="button" name="remember_clear" VALUE="'.$AppUI->_( "Clear Marked" ).'"> ';
+				echo '<INPUT TYPE="hidden" NAME="dosql" VALUE="do_inventory_aed" />';
+			}
+		?>
+	</TD>
+</TR>
+</TBODY>
+</FORM>
 </TABLE>
 
 <?php
-		
+			
+	$div_begun = false;
+			
+	if ( $num_marked )
+	{
+		echo "<div style='font-size: 9px; padding-top: 4px;'>";
+		echo $num_marked." ".$AppUI->_( "items remembered" );
+		$div_begun = true;
+	}
+			
 	global $company_list;
 	load_company_list();
 		
@@ -89,8 +117,15 @@ load_all_items();
 		
 	if ( $filter_company )
 	{
-		echo "<div style='font-size: 9px; padding-top: 4px;'>";
-		echo "(".$AppUI->_( "filtered by" )." ";
+		if ( !$div_begun )
+		{
+			echo "<div style='font-size: 9px; padding-top: 4px;'>";
+			$div_begun = true;
+		}
+		else echo " | ";
+		
+		
+		echo $AppUI->_( "filtered by" )." ";
 		
 		if ( $filter_type !="choose" && $filter_index )
 		{
@@ -101,8 +136,9 @@ load_all_items();
 			echo $company_list[ $filter_company ][ 'company_name' ];
 		}
 
-		echo ")";
-		echo "</div>";
 	}
+	
+	if ( $div_begun ) echo "</div>";
+	
 ?>
 
