@@ -210,7 +210,7 @@ function display_item( &$item, $indent, $children = 0 )
 	
 	$drawn_array[ $item['inventory_id' ] ] = true;
 	
-	echo "<TR ".(in_array( $item['inventory_id'], $marked )?" style='font-weight: bold'":"")."><TD>";
+	echo "<TR><TD>";
 	$canEdit = !getDenyEdit( $m, $item['inventory_id'] );
 	if ( $canEdit )
 	{
@@ -236,7 +236,7 @@ function display_item( &$item, $indent, $children = 0 )
 			echo '<img src="./images/shim.gif" width="16" height="12"  border="0">';
 		}
 	}
-	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}'>";
+	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}' ".(($children && !$item[ 'inventory_parent' ] )?" style='font-weight: bold'":"").">";
 	echo $item['inventory_name'];
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
