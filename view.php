@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.12 2003/11/30 11:46:44 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.13 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -6,7 +6,6 @@ global $item_list, $item_list_parents;
 include_once("{$dPconfig['root_dir']}/modules/inventory/utility.php");
 
 error_reporting( E_ALL );
-
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
@@ -22,6 +21,16 @@ $canRead = !getDenyRead( $m, $inventory_id );
 $canEdit = !getDenyEdit( $m, $inventory_id );
 
 if (!$canRead) $AppUI->redirect( "m=public&a=access_denied" );
+
+// clear filters if requested
+
+if ( isset( $_GET['clearfilter'] ) && $_GET['clearfilter'] == 'yes' )
+{
+	$AppUI->setState( 'InventoryIdxFilterCompany', '' );
+	$AppUI->setState( 'InventoryIdxFilterType', '' );
+	$AppUI->setState( 'InventoryIdxFilterIndex', '' );
+	$AppUI->setState( 'InventoryIdxFilterSearch', '' );
+}
 
 $msg = '';
 $obj = new CInventory();

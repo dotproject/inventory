@@ -172,6 +172,23 @@ $canEdit = !getDenyEdit( $m );
 		echo " (search: $filter_search)";
 	}
 	
+	if ( $filter_search || $filter_company )
+	{
+		reset( $_GET );
+		
+		$url = "?";
+		foreach ( $_GET as $key => $value )
+		{
+			if ( $key != "clearfilter" )
+			{
+				$url .= $key."=".$value."&";
+			}
+		}
+		echo " - <a href='".$url."clearfilter=yes&'>";
+		echo $AppUI->_("clear filter");
+		echo "</a>";
+	}
+	
 	if ( $div_begun ) echo "</div>";
 	
 ?>

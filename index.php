@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: index.php,v 1.5 2004/03/05 08:17:55 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: index.php,v 1.6 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 
@@ -11,6 +11,16 @@ $canEdit = !getDenyEdit( $m );
 
 if (!$canRead) {
 	$AppUI->redirect( "m=public&a=access_denied" );
+}
+
+// clear filters if requested
+
+if ( isset( $_GET['clearfilter'] ) && $_GET['clearfilter'] == 'yes' )
+{
+	$AppUI->setState( 'InventoryIdxFilterCompany', '' );
+	$AppUI->setState( 'InventoryIdxFilterType', '' );
+	$AppUI->setState( 'InventoryIdxFilterIndex', '' );
+	$AppUI->setState( 'InventoryIdxFilterSearch', '' );
 }
 
 
@@ -44,6 +54,9 @@ $f1 = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'Inven
 
 if (isset( $_POST['f2'] )) {
 	$AppUI->setState( 'InventoryIdxFilterType', $_POST['f2'] );
+}
+
+if (isset( $_POST['f3'] )) {
 	$AppUI->setState( 'InventoryIdxFilterIndex', $_POST['f3'] );
 }
 
@@ -77,15 +90,23 @@ if ( $f2 != "choose" ) $filters3 = array( "choose" => "Choose..." );
 else $filters3 = array( "na" => "NA" );
 
 $titleBlock->addCrumbRight(
-	'<TD><form action="?m=inventory" method="post" name="itemFilter1">'.$AppUI->_('Filter') . ':'
+	'<TD><form action="?m=inventory" method="post" name="itemFilter1">'.$AppUI->_('Filter') . ': '
 		. arraySelect( $filters, 'f1', 'size=1 class=text id="itemList1" onChange="document.itemFilter1.submit();"', $f1, true )
 		. '</form></TD>'
 		. '<TD><form action="?m=inventory" method="post" id="itemFilter2" name="itemFilter2">'
 		. arraySelect( $filters2, 'f2', 'size=1 class=text style="width: 100px" id="itemList2" onChange="'."javascript:changeListByType( 'itemList1', 'itemList2', 'itemList3', 0, '".$AppUI->_( "Choose..." )."' );".'"', $f2, true )
 		. arraySelect( $filters3, 'f3', 'size=1 class=text style="width: 100px" id="itemList3" onChange="document.itemFilter2.submit();"', $f3, true )
+		. '<INPUT TYPE="button" name="clear" value="<--'.$AppUI->_('Clear')
+		  . '" onClick="document.itemFilter2.f3.value=0;'
+		  . ' document.itemFilter2.submit();">'
 		. "</form></TD>"
+	
+	
 		. '<TD><form action="?m=inventory" method="post" id="itemFilter3" name="itemFilter3">'
 		. "<INPUT TYPE='text' size='10' name='f4' onChange='document.itemFilter3.submit();' value='$f4'>"
+		. '<INPUT TYPE="button" name="clear" value="<--'.$AppUI->_('Clear')
+		  . '" onClick="document.itemFilter3.f4.value='."''".';'
+		  . ' document.itemFilter3.submit();">'
 		. '</FORM></TD>'
 	
 	, 'ALIGN="right"'
