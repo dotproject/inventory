@@ -117,7 +117,7 @@ function display_item( &$item, $indent, $children = 0 )
 	global $item_list_parents,$AppUI;
 	global $user_list, $project_list, $company_list, $department_list;
 	
-	$drawn_array[ $item['inventory_id' ] ] = 1;
+	$drawn_array[ $item['inventory_id' ] ] = true;
 	
 	echo "<TR><TD>";
 	$canEdit = !getDenyEdit( $m, $item['inventory_id'] );

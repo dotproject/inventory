@@ -78,6 +78,10 @@ class CInventory extends CDpObject
 			}
 		}
 		
+		global $drawn_array;
+		
+		$drawn_array[ $idx ] = true;
+		
 		return $total;
 	}
 	
