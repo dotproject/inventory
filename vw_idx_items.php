@@ -26,7 +26,7 @@ load_all_items();
 
 
 
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" >
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" WIDTH="100%" >
 	<THEAD>
 	<TR>
 		<TH></TH>
@@ -60,7 +60,9 @@ load_all_items();
 		
 	/* make sure orphaned items are also displayed */
 		
-/*		if (!$child_parent && 0)
+		global $drawn_array;
+		
+		if (!$child_parent )
 		{
 			reset( $item_list );
 			foreach ($item_list as $item )
@@ -70,7 +72,7 @@ load_all_items();
 					display_item( $item, 0 );
 				}
 			}
-		}*/
+		}
 	?>
 </TBODY>	
 </TABLE>
@@ -89,11 +91,13 @@ load_all_items();
 		echo "<div style='font-size: 9px; padding-top: 4px;'>";
 		echo "(".$AppUI->_( "filtered by" )." ";
 		
-		echo $company_list[ $filter_company ][ 'company_name' ];
-		
 		if ( $filter_type !="choose" && $filter_index )
 		{
-			echo " ".$AppUI->_( "and" )." ".$AppUI->_( $filter_type )." = ".$filter_index;
+			echo " ".$AppUI->_( $filter_type );
+		}
+		else
+		{
+			echo $company_list[ $filter_company ][ 'company_name' ];
 		}
 
 		echo ")";

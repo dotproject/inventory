@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.6 2003/11/10 06:49:15 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.7 2003/11/10 09:11:17 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -53,13 +53,13 @@ if (!getDenyEdit( $m ))
 	);
 	
 	$titleBlock->addCell( '<input type="submit" class="button" value="'.$AppUI->_('new sub-item').'">', ''
-						  , '<form action ="?m=inventory&a=addedit&inventory_parent=$inventory_id" method="post">'
+						  , '<form action ="?m=inventory&a=addedit&inventory_parent='.$obj->inventory_id.'" method="post">'
 						  , '</form>' );
 	
 }
 
 $titleBlock->addCrumb( "?m=inventory", "inventory list" );
-if ( isset( $obj->inventory_parent ) && $obj->inventory_parent ) $titleBlock->addCrumb( "?m=inventory&a=view&inventory_id=$obj->inventory_parent", "view parent" );
+if ( isset( $obj->inventory_parent ) && $obj->inventory_parent ) $titleBlock->addCrumb( "?m=inventory&a=view&inventory_id=".$obj->inventory_parent, "view parent" );
 if ( $canEdit )
 {
 	$titleBlock->addCrumb( "?m=inventory&a=addedit&inventory_id=".$inventory_id, "edit this item" );

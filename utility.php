@@ -54,11 +54,13 @@ function load_all_items()
 	
 	if ( $filter_company )
 	{
-		$sql .= "WHERE inventory_company = $filter_company \n";
-		
 		if ( $filter_index && $filter_type != "choose" )
 		{
-			$sql .= "AND inventory_${filter_type} = $filter_index";
+			$sql .= "WHERE inventory_${filter_type} = $filter_index";
+		}
+		else
+		{
+			$sql .= "WHERE inventory_company = $filter_company \n";
 		}
 	}
 	
