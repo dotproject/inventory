@@ -313,8 +313,12 @@ function array_csort()   //coded by Ichier2003
 {
     $args = func_get_args();
     $marray = array_shift($args);
+	
+	if ( empty( $marray )) return array();
+	
 	$i = 0;
     $msortline = "return(array_multisort(";
+	$sortarr = array();
     foreach ($args as $arg) {
         $i++;
         if (is_string($arg)) {
