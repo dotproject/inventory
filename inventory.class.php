@@ -1,0 +1,128 @@
+<?php /* INVENTORY $id: inventory.class.php,v 1.00 2003/11/02 17:32:00 dylan_cuthbert Exp $ */
+
+error_reporting( E_ALL );
+
+require_once( $AppUI->getSystemClass ('dp' ) );
+require_once( $AppUI->getLibraryClass( 'PEAR/Date' ) );
+
+
+class CInventory extends CDpObject
+{
+	var $inventory_id = NULL;
+	var $inventory_user = NULL;
+	var $inventory_company = NULL;
+	var $inventory_department = NULL;
+	var $inventory_project = NULL;
+	var $inventory_category = NULL;
+	var $inventory_brand = NULL;
+	var $inventory_purchased = NULL;
+	var $inventory_cost = NULL;
+	var $inventory_rental_period = NULL;
+	var $inventory_name = NULL;
+	var $inventory_description = NULL;
+	var $inventory_serial = NULL;
+	var $inventory_asset_no = NULL;
+	var $inventory_costcode = NULL;
+	var $inventory_parent = NULL;
+	
+	function CInventory()
+	{
+		$this->CDpObject( 'inventory', 'inventory_id' );
+	}
+	
+	function check()
+	{
+		if ( !isset( $this->inventory_cost) )
+		{
+			$this->inventory_cost = 0;
+		}
+		return NULL;
+	}
+	
+// calculates the price of this object *and* all its children
+// you can pass in the globals item_list and item_list_parents (created by load_all_items
+// in utility.php to speed up the process
+	
+	function calcChildrenTotal( $idx = 0, $item_list = NULL, $item_list_parents = NULL )
+	{
+		$total = 0;
+		
+		if ( !$idx ) $idx = $this->inventory_id;
+		
+// do we have a cache of items?
+		
+		if ( count( $item_list ) )
+		{
+			if ( isset( $item_list_parents[ $idx ] ) )
+			{
+				reset( $item_list_parents[ $idx ] );
+				foreach ( $item_list_parents[ $idx ] as $id )
+				{
+					$total += $item_list[ $id ][ 'inventory_cost' ];
+					$total += $this->calcChildrenTotal( $id, $item_list, $item_list_parents );
+				}
+			}
+		}
+		else
+		{
+			$sql = "SELECT inventory_id,inventory_cost FROM inventory WHERE inventory_parent=$idx";
+			$child_list = db_loadList( $sql );
+			echo db_error();
+
+			foreach ( $child_list as $child )
+			{
+				$total += $child[ 'inventory_cost' ];
+				$total += $this->calcChildrenTotal( $child[ 'inventory_id' ] );
+			}
+		}
+		
+		return $total;
+	}
+	
+	function getAssetNo()
+	{
+		if ( isset( $this->inventory_asset_no ) && $this->inventory_asset_no )
+		{
+			return $this->inventory_asset_no;
+		}
+		return sprintf( "%06d", $this->inventory_id );
+	}
+}
+
+
+class CInventoryCategory extends CDpObject
+{
+	var $inventory_category_id = NULL;
+	var $inventory_category_name = NULL;
+	
+	function CInventoryCategory()
+	{
+		$this->CDpObject( 'inventory_categories', 'inventory_category_id' );
+	}
+	
+	function check()
+	{
+		return NULL;
+	}
+}
+
+
+class CInventoryBrand extends CDpObject
+{
+	var $inventory_brand_id = NULL;
+	var $inventory_brand_name = NULL;
+	
+	function CInventoryBrand()
+	{
+		$this->CDpObject( 'inventory_brands', 'inventory_brand_id' );
+	}
+	
+	function check()
+	{
+		return NULL;
+	}
+}
+
+
+
+?>

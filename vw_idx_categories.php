@@ -1,0 +1,126 @@
+<?php
+
+global $m,$category_list,$a;
+
+error_reporting( E_ALL );
+
+include_once("{$AppUI->cfg['root_dir']}/modules/inventory/utility.php");
+
+$canEdit = !getDenyEdit( $m );
+
+?>
+
+
+<?php
+if ( $canEdit )
+{
+?>
+
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+<!--
+function renameWindow( _id, _name, _type )
+{
+	
+window.name = "InventoryWindow";
+
+rw = window.open("", 'RenameWin','width=400,height=100,scrollbar=no,resizable=no,status=no,toolbar=no' );
+rw.document.clear();
+rw.document.write( "<HEAD>Rename " + _type + ' "' + _name + '" </HEAD>' );
+
+rw.document.write( "<BODY>" );
+rw.document.write( "<FORM action='?m=inventory' METHOD='post' TARGET='" + window.name + "' onSubmit='self.close()'>" );
+rw.document.write( "<INPUT TYPE='hidden' name='change_" + _type + "_id' value='" + _id + "' />" );
+rw.document.write( "<INPUT TYPE='hidden' NAME='dosql' VALUE='do_inventory_aed' />" );
+rw.document.write( "<INPUT TYPE='text' NAME='change_"+_type+"_name' value='"+_name+"'>" );
+
+update_text = "<?php echo $AppUI->_('rename');?>";
+cancel_text = "<?php echo $AppUI->_('cancel');?>";
+rw.document.write( '<INPUT type="submit" name="btnFuseAction" value="'+update_text+'" />' );
+rw.document.write( '<INPUT type="button" name="btnFuseCancel" value="'+cancel_text+'" onClick="self.close()" />' );
+rw.document.write( "</FORM>" );
+
+rw.document.write( "</BODY>" );
+
+
+}
+-->
+</SCRIPT>
+
+<?php
+}
+?>
+
+
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
+<THEAD>
+	<TR>
+		<TH><?php echo $AppUI->_( "Categories" );?></TH>
+		<TH><?php echo $AppUI->_( "Brands" );?></TH>
+</THEAD>
+<TBODY>
+<TR>
+	<TD WIDTH="50%" STYLE="padding: 10px;" VALIGN="top" >
+		<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
+			<THEAD>
+			<TR>
+				<TH></TH>
+				<TH><?php echo $AppUI->_( "Category Name" ); ?></TH>
+				<TH><?php echo $AppUI->_( "Mark" ); ?></TH>
+			</TR>
+			</THEAD>
+			<TBODY>
+			<?php
+				
+				foreach ( $category_list as $category )
+				{
+					echo "<TR><TD>";
+					if ( $canEdit )
+					{
+						echo "<A HREF='javascript:renameWindow( ".$category[ 'inventory_category_id' ].",\"".$category[ 'inventory_category_name' ]."\",\"category\" );'>";
+						echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" );
+						echo "</A>";
+					}
+					echo "</TD><TD WIDTH='100%'>";
+					echo $category[ 'inventory_category_name' ];
+					echo "</TD><TD ALIGN='center'>";
+					echo '<INPUT TYPE="CHECKBOX" NAME="category_'.$category['inventory_category_id'].'">';
+					echo "</TD></TR>";
+				}
+			?>
+		</TBODY>	
+		</TABLE>
+	</TD>
+	<TD WIDTH="50%" STYLE="padding: 10px;" VALIGN="top">
+		<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl">
+			<THEAD>
+			<TR>
+				<TH></TH>
+				<TH><?php echo $AppUI->_( "Brand Name" ); ?></TH>
+				<TH><?php echo $AppUI->_( "Mark" ); ?></TH>
+			</TR>
+			</THEAD>
+			<TBODY>
+			<?php
+				foreach ( $brand_list as $brand )
+				{
+					echo "<TR><TD>";
+					if ( $canEdit )
+					{
+						echo "<A HREF='javascript:renameWindow( ".$brand[ 'inventory_brand_id' ].",\"".$brand[ 'inventory_brand_name' ]."\",\"brand\" );'>";
+						echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" );
+						echo "</A>";
+					}
+					echo "</TD><TD WIDTH='100%'>";
+					echo $brand[ 'inventory_brand_name' ];
+					echo "</TD><TD ALIGN='center'>";
+					echo '<INPUT TYPE="CHECKBOX" NAME="brand_'.$brand['inventory_brand_id'].'">';
+					echo "</TD></TR>";
+				}
+				?>
+			</TBODY>	
+			</TABLE>
+	</TD>
+</TR>
+</TBODY>
+</TABLE>
+
