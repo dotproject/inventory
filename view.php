@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: view.php,v 1.4 2003/11/09 12:24:35 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: view.php,v 1.5 2003/11/10 06:33:16 dylan_cuthbert Exp $ */
 
 global $item_list, $item_list_parents;
 
@@ -29,9 +29,7 @@ $canDelete = $obj->canDelete( $msg, $inventory_id );
 
 if ( !$obj->load( $inventory_id ) )
 {
-	$AppUI->setMsg( "inventory" );
-	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-	$AppUI->redirect();
+	$AppUI->redirect( "m=inventory" );
 }
 
 
