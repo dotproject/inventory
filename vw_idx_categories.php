@@ -25,21 +25,24 @@ window.name = "InventoryWindow";
 
 rw = window.open("", 'RenameWin','width=400,height=100,scrollbar=no,resizable=no,status=no,toolbar=no' );
 rw.document.clear();
-rw.document.write( "<HEAD>Rename " + _type + ' "' + _name + '" </HEAD>' );
+rw.document.write( "<HTML>\n" );
+rw.document.write( "<HEAD>Rename " + _type + ' "' + _name + '" </HEAD>\n' );
 
-rw.document.write( "<BODY>" );
-rw.document.write( "<FORM action='?m=inventory' METHOD='post' TARGET='" + window.name + "' onSubmit='self.close()'>" );
-rw.document.write( "<INPUT TYPE='hidden' name='change_" + _type + "_id' value='" + _id + "' />" );
-rw.document.write( "<INPUT TYPE='hidden' NAME='dosql' VALUE='do_inventory_aed' />" );
-rw.document.write( "<INPUT TYPE='text' NAME='change_"+_type+"_name' value='"+_name+"'>" );
+rw.document.write( "<BODY>\n" );
+rw.document.write( "<FORM action='?m=inventory' METHOD='post' TARGET='" + window.name + "' onSubmit='self.close()'>\n" );
+rw.document.write( "<INPUT TYPE='hidden' name='change_" + _type + "_id' value='" + _id + "' />\n" );
+rw.document.write( "<INPUT TYPE='hidden' NAME='dosql' VALUE='do_inventory_aed' />\n" );
+rw.document.write( "<INPUT TYPE='text' NAME='change_"+_type+"_name' value='"+_name+"'>\n" );
 
 update_text = "<?php echo $AppUI->_('rename');?>";
 cancel_text = "<?php echo $AppUI->_('cancel');?>";
-rw.document.write( '<INPUT type="submit" name="btnFuseAction" value="'+update_text+'" />' );
-rw.document.write( '<INPUT type="button" name="btnFuseCancel" value="'+cancel_text+'" onClick="self.close()" />' );
-rw.document.write( "</FORM>" );
+rw.document.write( '<INPUT type="submit" name="btnFuseAction" value="'+update_text+'" />\n' );
+rw.document.write( '<INPUT type="button" name="btnFuseCancel" value="'+cancel_text+'" onClick="self.close()" />\n' );
+rw.document.write( "</FORM>\n" );
 
-rw.document.write( "</BODY>" );
+rw.document.write( "</BODY>\n" );
+rw.document.write( "</HTML>\n" );
+rw.document.close();
 
 
 }
