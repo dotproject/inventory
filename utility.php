@@ -2,14 +2,10 @@
 
 // common functions and variables used by the inventory module
 
-require_once( $AppUI->getModuleClass( 'tasks' ) );
-
 
 // load up the category and brand lists
 
 global $category_list,$brand_list;
-
-
 
 $sql = "SELECT * from inventory_categories where 1;";
 $category_list = db_loadList( $sql );
@@ -18,11 +14,6 @@ echo db_error();
 $sql = "SELECT * from inventory_brands where 1;";
 $brand_list = db_loadList( $sql );
 echo db_error();
-
-// sort the lists
-
-$category_list = array_csort( $category_list, "inventory_category_name", intval( SORT_ASC ) );
-$brand_list = array_csort( $brand_list, "inventory_brand_name", intval( SORT_ASC ) );
 
 
 function get_category_name( &$category_list, $catind )
@@ -91,7 +82,6 @@ function load_all_items()
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
-	$filter_search  = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : 0;
 	
 	$sql =
 		"SELECT inventory.*, inventory_category_name, inventory_brand_name
@@ -107,8 +97,8 @@ function load_all_items()
 		 LEFT JOIN companies ON inventory_company=company_id
 		 LEFT JOIN departments ON inventory_department=dept_id
 		 LEFT JOIN users ON inventory_user=user_id
+		 LEFT JOIN contacts ON users.user_contact=contacts.contact_id
 		 LEFT JOIN projects ON inventory_project=project_id
-		 LEFT JOIN contacts ON contact_id=user_contact
 		";
 		
 	$sql .= "WHERE 1 \n";
@@ -133,12 +123,6 @@ function load_all_items()
 	{
 		$sql .= "AND ( inventory_purchase_state IS NULL OR inventory_purchase_state = 'A' )  \n";
 	}
-	
-	if ( $filter_search != "" )
-	{
-		$sql .= "AND ( CONCAT(inventory_name,inventory_category_name,inventory_brand_name,inventory_description) LIKE '%$filter_search%' )   \n";
-	}
-	
 	
 	$sql_list = db_loadList( $sql ); db_error();
 	
@@ -165,15 +149,15 @@ function load_all_items()
 	{
 		if ( isset( $sort_state[ 'sort_item2' ] ) )
 		{
-			$sorted_item_list = array_csort( $item_list, $sort_state['sort_item1'], intval( $sort_state['sort_order1'] )
+			$sorted_item_list = array_csort_inventory( $item_list, $sort_state['sort_item1'], intval( $sort_state['sort_order1'] )
 											 , $sort_state[ 'sort_item2' ], intval( $sort_state['sort_order2'] ) );
 		}
 		else
 		{
-			$sorted_item_list = array_csort( $item_list, $sort_state['sort_item1'], intval($sort_state['sort_order1']) );
+			$sorted_item_list = array_csort_inventory( $item_list, $sort_state['sort_item1'], intval($sort_state['sort_order1']) );
 		}
 	}
-	else $sorted_item_list = array_csort( $item_list, 'inventory_id' );
+	else $sorted_item_list = array_csort_inventory( $item_list, 'inventory_id' );
 	
 }
 
@@ -186,6 +170,7 @@ function load_company_list()
 	$compsql = "
 	SELECT company_id, company_name
 	FROM companies
+	ORDER BY company_name
 	";
 		
 	$company_list = array();
@@ -238,20 +223,13 @@ function display_item( &$item, $indent, $children = 0 )
 	
 	$drawn_array[ $item['inventory_id' ] ] = true;
 	
-	echo "<TR><TD>";
-
-	$perms =& $AppUI->acl();
-
-	$canEdit = $perms->checkModuleItem( $m, "edit", $item['inventory_id'] );
-	$canAdd = $perms->checkModuleItem( $m, "add", $item['inventory_id'] );
-
-	if ( $canAdd )
+	echo "<TR><TD align='center'>";
+	$canEdit = !getDenyEdit( $m, $item['inventory_id'] );
+	if ( $canEdit )
 	{
 		echo '<INPUT TYPE="checkbox" NAME="mark[]" VALUE="'.$item['inventory_id'].'" ';
 		echo (in_array( $item['inventory_id'], $marked )?"CHECKED":"").'>&nbsp;';
-	}
-	if ( $canEdit )
-	{
+		
 		echo '<A HREF="?m=inventory&a=addedit&inventory_id='.$item['inventory_id'].'">';
 		echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" ).'</A>';
 	}
@@ -273,10 +251,6 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}' ".(($children && !$item[ 'inventory_parent' ] )?" style='font-weight: bold'":"").">";
 	echo $item['inventory_name'];
-	if ( $item['inventory_quantity'] > 1 )
-	{
-		echo '<i> x'.$item['inventory_quantity'].'</i>';
-	}
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
 		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );
@@ -284,10 +258,10 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 	echo "</A>";
 	
-	echo "</TD><TD>";
+	echo "</TD><TD NOWRAP>";
 	echo dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) );
 	
-	echo "</TD><TD>";
+	echo "</TD><TD NOWRAP>";
 	echo dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) );
 	
 /* lookup of company-name */
@@ -297,7 +271,7 @@ function display_item( &$item, $indent, $children = 0 )
 	
 /* lookup of department name */
 	
-	echo "</TD><TD>";
+	echo "</TD><TD NOWRAP>";
 	echo dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) );
 	
 /* lookup of user-name */
@@ -318,7 +292,7 @@ function display_item( &$item, $indent, $children = 0 )
 	
 /* lookup of project-name */
 	
-	echo "</TD><TD>";
+	echo "</TD><TD NOWRAP>";
 	$projname = dPgetParam( $item, 'inventory_project_name', '' );
 	if ( $projname != '' )
 	{
@@ -345,7 +319,7 @@ function display_item( &$item, $indent, $children = 0 )
 	}
 	echo $date->format( $df );
 	
-	echo "</TD><TD>";
+	echo "</TD><TD align='right'>";
 	
 	if ( $inventory_view_mode == "normal" )
 	{
@@ -388,6 +362,32 @@ function display_item( &$item, $indent, $children = 0 )
 }
 
 
+function array_csort_inventory()   //coded by Ichier2003
+{
+    $args = func_get_args();
+    $marray = array_shift($args);
+	
+	if ( empty( $marray )) return array();
+	
+	$i = 0;
+    $msortline = "return(array_multisort(";
+	$sortarr = array();
+    foreach ($args as $arg) {
+        $i++;
+        if (is_string($arg)) {
+            foreach ($marray as $row) {
+                $sortarr[$i][] = $row[$arg];
+            }
+        } else {
+            $sortarr[$i] = $arg;
+        }
+        $msortline .= "\$sortarr[".$i."],";
+    }
+    $msortline .= "\$marray));";
+
+    eval($msortline);
+    return $marray;
+}
 
 
 function sortHeader( $header, $field )
@@ -413,7 +413,7 @@ function sortHeader( $header, $field )
 	
 	
 	
-	echo '<A STYLE="color: #fff" HREF="?m=inventory&';
+	echo '<A HREF="?m=inventory&';
 	if ( $a ) echo 'a='.$a.'&';
 	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.$_GET[ 'inventory_id' ].'&';
 	echo 'sort_item='.$field.'&sort_order='.$order.'">';

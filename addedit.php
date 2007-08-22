@@ -1,4 +1,4 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.14 2004/08/17 09:21:17 dylan_cuthbert Exp $ */
+<?php /* INVENTORY $Id: addedit.php,v 1.15 2004/11/27 12:14:22 dylan_cuthbert Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 
@@ -430,8 +430,9 @@ function submitIt()
 					<SELECT NAME="inventory_project" CLASS="text">
 					<?php
 						$usersql = "
-						SELECT project_id, project_name
+						SELECT project_id, project_short_name, project_name
 						FROM projects
+						ORDER BY project_short_name
 						";
 						
 						$project_list = array();
@@ -443,7 +444,7 @@ function submitIt()
 								if ( !getDenyRead( "projects", $row[ 'project_id' ] ) )
 								{
 									$project_list[ $row[ "project_id" ] ] = $row;
-									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>").$row["project_name"];
+									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>")."(".$row["project_short_name"].") ".$row["project_name"];
 								}
 							}
 						}
@@ -461,6 +462,7 @@ function submitIt()
 						, contact_last_name AS user_last_name
 						FROM users
 						LEFT JOIN contacts ON contact_id=user_contact
+						ORDER BY contact_first_name, contact_last_name
 						";
 						
 						if (($rows = db_loadList( $usersql, NULL )))
