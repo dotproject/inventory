@@ -41,7 +41,7 @@ load_all_items();
 ?>
 
 
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" WIDTH="100%" >
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="1" CLASS="tbl" WIDTH="100%" >
 <FORM ACTION="?m=inventory" METHOD="post" ID="markForm">
 	<THEAD>
 	
@@ -49,7 +49,7 @@ load_all_items();
 		<TH><?php
 			if ($canEdit)
 			{
-				if ( $canAdd ) echo $AppUI->_( "Mark" )."/<BR />";
+				if ( $canAdd ) echo $AppUI->_( "Mark" )."/";
 				echo $AppUI->_( "Edit" );
 			}
 			?> </TH>
@@ -72,16 +72,6 @@ load_all_items();
 				sortHeader( $AppUI->_( "Status" ), "inventory_purchase_state" );
 			}
 		?>
-<!--		<TH><?php echo $AppUI->_( "Asset No" ); ?></TH>
-		<TH NOWRAP><?php echo $AppUI->_( "Item Name" )." (".$AppUI->_("click for details").")"; ?></TH>
-		<TH><?php echo $AppUI->_( "Brand" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Category" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Company" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Department" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Assigned to" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Project" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Date" ); ?></TH>
-		<TH><?php echo $AppUI->_( "Cost" ); ?></TH>-->
 	</TR>
 	</THEAD>
 	<TBODY>

@@ -57,16 +57,11 @@ rw.document.close();
 ?>
 
 
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
-<THEAD>
-	<TR>
-		<TH><?php echo $AppUI->_( "Categories" );?></TH>
-		<TH><?php echo $AppUI->_( "Brands" );?></TH>
-</THEAD>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%" CLASS="tbl" >
 <TBODY>
 <TR>
-	<TD WIDTH="50%" STYLE="padding: 10px;" VALIGN="top" >
-		<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
+	<TD WIDTH="50%" STYLE="padding: 4px;" VALIGN="top" >
+		<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="1" WIDTH="100%" CLASS="tbl" >
 			<THEAD>
 			<TR>
 				<TH></TH>
@@ -96,8 +91,8 @@ rw.document.close();
 		</TBODY>	
 		</TABLE>
 	</TD>
-	<TD WIDTH="50%" STYLE="padding: 10px;" VALIGN="top">
-		<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="1" WIDTH="100%" CLASS="tbl">
+	<TD WIDTH="50%" STYLE="padding: 4px;" VALIGN="top">
+		<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="1" WIDTH="100%" CLASS="tbl">
 			<THEAD>
 			<TR>
 				<TH></TH>
