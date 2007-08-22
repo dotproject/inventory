@@ -41,7 +41,7 @@ class CSetupInventory {
 			$sql = "ALTER TABLE inventory " .
 				"  ADD COLUMN inventory_purchase_state char(1)" .
 				", ADD COLUMN inventory_purchase_company int(11) NOT NULL default '0'" .
-				", ADD COLUMN inventory_delivered date NOT NULL default '2001-01-01'" .
+				", ADD COLUMN inventory_delivered date NOT NULL default '2007-08-01'" .
 				"";
 			db_exec( $sql ); db_error();
 			
